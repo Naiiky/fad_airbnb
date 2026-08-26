@@ -19,6 +19,7 @@
                 <nav class="flex items-center gap-6 text-sm font-medium text-[#404945]" aria-label="Navigation principale">
                     {% if app.user %}
                         <span class="hidden max-w-[220px] truncate sm:inline">{{ app.user.userIdentifier }}</span>
+                        <a class="transition hover:text-[#154539]" href="{{ path('app_account_show') }}">Compte</a>
                         <a class="transition hover:text-[#154539]" href="{{ path('app_logout') }}">Déconnexion</a>
                     {% else %}
                         <a class="transition hover:text-[#154539]" href="{{ path('app_login') }}">Connexion</a>

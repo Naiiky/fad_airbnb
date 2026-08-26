@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon compte | Havre{% endblock %}
+
+{% block body %}
+    {% set languageLabels = user.userLanguages|map(userLanguage => userLanguage.language.label) %}
+    {% set fullName = user.firstname ~ ' ' ~ user.lastname %}
+
+    <main class="mx-auto grid w-full max-w-[1180px] gap-8 px-6 py-10 md:px-10">
+        <section class="flex flex-col justify-between gap-6 border-b border-[#154539]/12 pb-8 lg:flex-row lg:items-end">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[#717975]">Compte Havre</p>
+                <h1 class="mt-3 font-serif text-4xl font-semibold leading-tight text-[#1c1c19] md:text-6xl">Bonjour {{ user.firstname }}</h1>
+                <p class="mt-4 max-w-[620px] text-base leading-7 text-[#404945]">Retrouvez les informations utilisées pour vos réservations, vos échanges avec les hôtes et la personnalisation de vos séjours.</p>
+            </div>
+            <a class="inline-flex min-h-[46px] items-center justify-center rounded-[10px] bg-[#2f5d50] px-5 text-sm font-semibold text-white transition hover:bg-[#154539]" href="{{ path('app_account_edit') }}">Modifier le profil</a>
+        </section>
+
+        <section class="grid gap-6 lg:grid-cols-[360px_1fr]">
+            <aside class="rounded-[12px] border border-[#154539]/10 bg-white/60 p-6 shadow-[0_20px_70px_rgba(21,69,57,0.08)]">
+                <div class="flex items-center gap-4">
+                    {% if user.avatar %}
+                        <img class="size-20 rounded-full object-cover ring-4 ring-[#fcf9f4]" src="{{ user.avatar }}" alt="Avatar de {{ fullName }}">
+                    {% else %}
+                        <div class="grid size-20 place-items-center rounded-full bg-[#2f5d50] font-serif text-3xl font-semibold text-white ring-4 ring-[#fcf9f4]">{{ user.firstname|slice(0, 1)|upper }}{{ user.lastname|slice(0, 1)|upper }}</div>
+                    {% endif %}
+                    <div class="min-w-0">
+                        <h2 class="truncate font-serif text-2xl font-semibold text-[#1c1c19]">{{ fullName }}</h2>
+                        <p class="truncate text-sm text-[#404945]">{{ user.email }}</p>
+                    </div>
+                </div>
+
+                <dl class="mt-8 grid gap-4 text-sm">
+                    <div class="flex items-center justify-between gap-4 border-t border-[#154539]/10 pt-4">
+                        <dt class="text-[#717975]">Statut</dt>
+                        <dd class="rounded-full border border-[#2f5d50]/20 bg-[#2f5d50]/8 px-3 py-1 font-semibold text-[#154539]">{{ user.status.label }}</dd>
+                    </div>
+                    <div class="flex items-center justify-between gap-4 border-t border-[#154539]/10 pt-4">
+                        <dt class="text-[#717975]">Email vérifié</dt>
+                        <dd class="font-semibold text-[#154539]">{{ user.emailVerified ? 'Oui' : 'Non' }}</dd>
+                    </div>
+                    <div class="flex items-center justify-between gap-4 border-t border-[#154539]/10 pt-4">
+                        <dt class="text-[#717975]">Âge</dt>
+                        <dd class="font-semibold text-[#154539]">{{ user.ageVerificationStatus.label }}</dd>
+                    </div>
+                </dl>
+            </aside>
+
+            <div class="grid gap-6">
+                <section class="rounded-[12px] border border-[#154539]/10 bg-white/60 p-6">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <h2 class="font-serif text-3xl font-semibold text-[#1c1c19]">Informations personnelles</h2>
+                            <p class="mt-2 text-sm leading-6 text-[#717975]">Ces informations restent liées à votre compte connecté.</p>
+                        </div>
+                    </div>
+
+                    <dl class="mt-6 grid gap-x-8 gap-y-5 sm:grid-cols-2">
+                        <div>
+                            <dt class="text-xs font-semibold uppercase tracking-[0.16em] text-[#717975]">Téléphone</dt>
+                            <dd class="mt-2 text-base text-[#1c1c19]">{{ user.phone ?: 'Non renseigné' }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs font-semibold uppercase tracking-[0.16em] text-[#717975]">Pays</dt>
+                            <dd class="mt-2 text-base text-[#1c1c19]">{{ user.country.label }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs font-semibold uppercase tracking-[0.16em] text-[#717975]">Ville</dt>
+                            <dd class="mt-2 text-base text-[#1c1c19]">{{ user.city ?: 'Non renseignée' }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs font-semibold uppercase tracking-[0.16em] text-[#717975]">Code postal</dt>
+                            <dd class="mt-2 text-base text-[#1c1c19]">{{ user.zipCode ?: 'Non renseigné' }}</dd>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <dt class="text-xs font-semibold uppercase tracking-[0.16em] text-[#717975]">Adresse</dt>
+                            <dd class="mt-2 text-base text-[#1c1c19]">{{ user.address ?: 'Non renseignée' }}</dd>
+                        </div>
+                    </dl>
+                </section>
+
+                <section class="grid gap-6 md:grid-cols-2">
+                    <div class="rounded-[12px] border border-[#154539]/10 bg-white/60 p-6">
+                        <h2 class="font-serif text-3xl font-semibold text-[#1c1c19]">Bio</h2>
+                        <p class="mt-4 text-base leading-7 text-[#404945]">{{ user.bio ?: 'Aucune bio renseignée pour le moment.' }}</p>
+                    </div>
+
+                    <div class="rounded-[12px] border border-[#154539]/10 bg-white/60 p-6">
+                        <h2 class="font-serif text-3xl font-semibold text-[#1c1c19]">Langues</h2>
+                        {% if languageLabels|length > 0 %}
+                            <div class="mt-4 flex flex-wrap gap-2">
+                                {% for language in languageLabels %}
+                                    <span class="rounded-full border border-[#154539]/12 bg-[#fcf9f4] px-3 py-1.5 text-sm font-medium text-[#154539]">{{ language }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="mt-4 text-base leading-7 text-[#404945]">Aucune langue renseignée.</p>
+                        {% endif %}
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+{% endblock %}
