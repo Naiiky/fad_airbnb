@@ -16,4 +16,6 @@
 
 **ESCALATION** — Question utilisateur uniquement pour décision métier importante non déductible; Team Lead après trois échecs d'un finding.
 
-**REFERENCES** — `../protocol/state-machine.md`, `../rules/routing.md`, `../templates/task-state.md`, `../templates/task-graph.md`, `../protocol/findings.md`.
+**RULE LOADING** — Pour toute tâche touchant un upload, une transformation ou un stockage d'image utilisateur, ajouter le flag `FILE_UPLOAD`, charger `../rules/image-upload-webp.md` et l'inclure dans les context packets des agents concernés.
+
+**REFERENCES** — `../protocol/state-machine.md`, `../rules/routing.md`, `../rules/image-upload-webp.md`, `../templates/task-state.md`, `../templates/task-graph.md`, `../protocol/findings.md`.
