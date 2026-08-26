@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Entity\UserStatus;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AccountProfileTest extends WebTestCase
@@ -37,9 +38,8 @@ class AccountProfileTest extends WebTestCase
         $client = self::createClient();
         $user = $this->createUser('account-view-'.bin2hex(random_bytes(4)).'@example.com');
         $user
-            ->setPhone('+33 6 12 34 56 78')
+            ->setProfile('Camille', 'Morel', '+33 6 12 34 56 78', bio: 'Voyageuse calme, adepte des maisons lumineuses.', city: 'Lyon', birthDate: new \DateTimeImmutable('1992-04-10'))
             ->setBio('Voyageuse calme, adepte des maisons lumineuses.')
-            ->setCity('Lyon')
             ->addLanguage($this->findReference(Language::class, 'Français'));
         $this->entityManager->flush();
 
@@ -49,6 +49,7 @@ class AccountProfileTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Bonjour Camille');
         self::assertSelectorTextContains('body', '+33 6 12 34 56 78');
+        self::assertSelectorTextContains('body', ((new \DateTimeImmutable('1992-04-10'))->diff(new \DateTimeImmutable())->y).' ans');
         self::assertSelectorTextContains('body', 'ACTIVE');
         self::assertSelectorTextContains('body', 'Français');
     }
@@ -74,7 +75,7 @@ class AccountProfileTest extends WebTestCase
             'profile_form[firstname]' => 'Camille',
             'profile_form[lastname]' => 'Durand',
             'profile_form[phone]' => '+32 470 12 34 56',
-            'profile_form[avatar]' => 'https://example.com/avatar.jpg',
+            'profile_form[avatarFile][file]' => $this->createProfileImage(),
             'profile_form[bio]' => 'Je cherche des séjours calmes avec une belle lumière.',
             'profile_form[address]' => '12 rue des Hôtes',
             'profile_form[city]' => 'Bruxelles',
@@ -89,7 +90,8 @@ class AccountProfileTest extends WebTestCase
         self::assertSame('Camille', $user->getFirstname());
         self::assertSame('Durand', $user->getLastname());
         self::assertSame('+32 470 12 34 56', $user->getPhone());
-        self::assertSame('https://example.com/avatar.jpg', $user->getAvatar());
+        self::assertNotNull($user->getAvatar());
+        self::assertStringEndsWith('.webp', $user->getAvatar());
         self::assertSame('Je cherche des séjours calmes avec une belle lumière.', $user->getBio());
         self::assertSame('12 rue des Hôtes', $user->getAddress());
         self::assertSame('Bruxelles', $user->getCity());
@@ -123,6 +125,21 @@ class AccountProfileTest extends WebTestCase
         $this->entityManager->flush();
 
         return $user;
+    }
+
+    private function createProfileImage(): UploadedFile
+    {
+        $path = tempnam(sys_get_temp_dir(), 'havre-profile-test-');
+        self::assertIsString($path);
+
+        $image = imagecreatetruecolor(32, 32);
+        self::assertNotFalse($image);
+
+        imagefill($image, 0, 0, imagecolorallocate($image, 47, 93, 80));
+        imagepng($image, $path);
+        imagedestroy($image);
+
+        return new UploadedFile($path, 'avatar.png', 'image/png', null, true);
     }
 
     /**

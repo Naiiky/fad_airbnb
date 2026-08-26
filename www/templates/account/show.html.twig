@@ -5,6 +5,7 @@
 {% block body %}
     {% set languageLabels = user.userLanguages|map(userLanguage => userLanguage.language.label) %}
     {% set fullName = user.firstname ~ ' ' ~ user.lastname %}
+    {% set avatarUrl = user.avatar ? vich_uploader_asset(user, 'avatarFile') : null %}
 
     <main class="mx-auto grid w-full max-w-[1180px] gap-8 px-6 py-10 md:px-10">
         <section class="flex flex-col justify-between gap-6 border-b border-[#154539]/12 pb-8 lg:flex-row lg:items-end">
@@ -19,8 +20,8 @@
         <section class="grid gap-6 lg:grid-cols-[360px_1fr]">
             <aside class="rounded-[12px] border border-[#154539]/10 bg-white/60 p-6 shadow-[0_20px_70px_rgba(21,69,57,0.08)]">
                 <div class="flex items-center gap-4">
-                    {% if user.avatar %}
-                        <img class="size-20 rounded-full object-cover ring-4 ring-[#fcf9f4]" src="{{ user.avatar }}" alt="Avatar de {{ fullName }}">
+                    {% if avatarUrl %}
+                        <img class="size-20 rounded-full object-cover ring-4 ring-[#fcf9f4]" src="{{ avatarUrl }}" alt="Avatar de {{ fullName }}">
                     {% else %}
                         <div class="grid size-20 place-items-center rounded-full bg-[#2f5d50] font-serif text-3xl font-semibold text-white ring-4 ring-[#fcf9f4]">{{ user.firstname|slice(0, 1)|upper }}{{ user.lastname|slice(0, 1)|upper }}</div>
                     {% endif %}
@@ -41,7 +42,7 @@
                     </div>
                     <div class="flex items-center justify-between gap-4 border-t border-[#154539]/10 pt-4">
                         <dt class="text-[#717975]">Âge</dt>
-                        <dd class="font-semibold text-[#154539]">{{ user.ageVerificationStatus.label }}</dd>
+                        <dd class="font-semibold text-[#154539]">{{ user.age is null ? 'Non renseigné' : user.age ~ ' ans' }}</dd>
                     </div>
                 </dl>
             </aside>

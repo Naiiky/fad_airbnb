@@ -8,6 +8,7 @@ use App\Form\ProfileFormType;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -39,12 +40,27 @@ class AccountController extends AbstractController
                 $selectedLanguages = $selectedLanguages->toArray();
             }
 
-            $this->syncLanguages($user, \is_array($selectedLanguages) ? $selectedLanguages : []);
-            $entityManager->flush();
+            try {
+                $this->syncLanguages($user, \is_array($selectedLanguages) ? $selectedLanguages : []);
+                $entityManager->flush();
+                $user->setAvatarFile(null);
+            } catch (\RuntimeException $exception) {
+                $user->setAvatarFile(null);
+                $form->get('avatarFile')->addError(new FormError($exception->getMessage()));
+
+                return $this->render('account/edit.html.twig', [
+                    'profileForm' => $form,
+                    'user' => $user,
+                ], new Response(Response::HTTP_UNPROCESSABLE_ENTITY));
+            }
 
             $this->addFlash('success', 'Votre profil a été mis à jour.');
 
             return $this->redirectToRoute('app_account_show');
+        }
+
+        if ($form->isSubmitted()) {
+            $user->setAvatarFile(null);
         }
 
         return $this->render('account/edit.html.twig', [

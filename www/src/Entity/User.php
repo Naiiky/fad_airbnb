@@ -5,9 +5,12 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
+#[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: \App\Repository\UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'uniq_user_email', columns: ['email'])]
@@ -33,6 +36,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?string $avatar = null;
 
+    #[Vich\UploadableField(mapping: 'user_avatar', fileNameProperty: 'avatar')]
+    private ?File $avatarFile = null;
+
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $bio = null;
 
@@ -56,6 +62,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $deletedAt = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $profileUpdatedAt = null;
 
     /** @var list<string> */
     #[ORM\Column(type: 'json')]
@@ -114,6 +123,39 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->status = $status;
         $this->ageVerificationStatus = $ageVerificationStatus;
         $this->country = $country;
+        $this->properties = new ArrayCollection();
+        $this->bookings = new ArrayCollection();
+        $this->conversations = new ArrayCollection();
+        $this->sentMessages = new ArrayCollection();
+        $this->userLanguages = new ArrayCollection();
+        $this->favoriteProperties = new ArrayCollection();
+    }
+
+    /** @return array<string, mixed> */
+    public function __serialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'email' => $this->email,
+            'password' => $this->password,
+            'firstname' => $this->firstname,
+            'lastname' => $this->lastname,
+            'roles' => $this->roles,
+            'avatar' => $this->avatar,
+        ];
+    }
+
+    /** @param array<string, mixed> $data */
+    public function __unserialize(array $data): void
+    {
+        $this->id = $data['id'] ?? null;
+        $this->email = (string) ($data['email'] ?? '');
+        $this->password = (string) ($data['password'] ?? '');
+        $this->firstname = (string) ($data['firstname'] ?? '');
+        $this->lastname = (string) ($data['lastname'] ?? '');
+        $this->roles = \is_array($data['roles'] ?? null) ? $data['roles'] : [];
+        $this->avatar = \is_string($data['avatar'] ?? null) ? $data['avatar'] : null;
+        $this->avatarFile = null;
         $this->properties = new ArrayCollection();
         $this->bookings = new ArrayCollection();
         $this->conversations = new ArrayCollection();
@@ -220,6 +262,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getAvatarFile(): ?File
+    {
+        return $this->avatarFile;
+    }
+
+    public function setAvatarFile(?File $avatarFile): self
+    {
+        $this->avatarFile = $avatarFile;
+
+        if (null !== $avatarFile) {
+            $this->profileUpdatedAt = new \DateTimeImmutable();
+        }
+
+        return $this;
+    }
+
     public function getBio(): ?string
     {
         return $this->bio;
@@ -271,6 +329,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getBirthDate(): ?\DateTimeImmutable
     {
         return $this->birthDate;
+    }
+
+    public function getAge(?\DateTimeImmutable $referenceDate = null): ?int
+    {
+        if (null === $this->birthDate) {
+            return null;
+        }
+
+        $referenceDate ??= new \DateTimeImmutable();
+
+        return $this->birthDate->diff($referenceDate)->y;
     }
 
     public function isEmailVerified(): bool

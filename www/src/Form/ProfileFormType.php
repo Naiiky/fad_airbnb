@@ -10,13 +10,13 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Image;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
-use Symfony\Component\Validator\Constraints\Url;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class ProfileFormType extends AbstractType
 {
@@ -45,13 +45,21 @@ class ProfileFormType extends AbstractType
                     new Regex(pattern: '/^[0-9 +().-]*$/', message: 'Le téléphone contient des caractères non valides.'),
                 ],
             ])
-            ->add('avatar', UrlType::class, [
-                'label' => 'Avatar',
+            ->add('avatarFile', VichImageType::class, [
+                'label' => 'Photo de profil',
                 'required' => false,
-                'default_protocol' => null,
+                'allow_delete' => false,
+                'download_uri' => false,
+                'image_uri' => false,
                 'constraints' => [
-                    new Length(max: 255, maxMessage: "L'avatar ne peut pas dépasser {{ limit }} caractères."),
-                    new Url(protocols: ['http', 'https'], message: 'Veuillez saisir une URL valide.'),
+                    new Image(
+                        maxSize: '3M',
+                        mimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+                        maxSizeMessage: 'La photo ne doit pas dépasser {{ limit }} {{ suffix }}.',
+                        mimeTypesMessage: 'Veuillez sélectionner une image JPEG, PNG ou WebP.',
+                        detectCorrupted: true,
+                        corruptedMessage: "L'image semble corrompue.",
+                    ),
                 ],
             ])
             ->add('bio', TextareaType::class, [
