@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command;
+namespace App\DataFixtures;
 
 use App\Entity\AgeVerificationStatus;
 use App\Entity\Booking;
@@ -14,31 +14,19 @@ use App\Entity\PropertyImage;
 use App\Entity\PropertyStatus;
 use App\Entity\User;
 use App\Entity\UserStatus;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-#[AsCommand(name: 'app:fixtures:load', description: 'Charge les donnees initiales de la phase 1.')]
-class LoadFixturesCommand extends Command
+class AppFixtures extends Fixture
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
         private readonly UserPasswordHasherInterface $passwordHasher,
     ) {
-        parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function load(ObjectManager $manager): void
     {
-        if ($this->entityManager->getRepository(Language::class)->count([]) > 0) {
-            $output->writeln('Fixtures de phase 1 deja presentes, aucun changement applique.');
-
-            return Command::SUCCESS;
-        }
-
         $english = new Language('ENGLISH');
         $french = new Language('FRENCH');
         $spanish = new Language('SPANISH');
@@ -101,39 +89,43 @@ class LoadFixturesCommand extends Command
             $bookingRejected,
             $bookingCancelled,
         ] as $reference) {
-            $this->entityManager->persist($reference);
+            $manager->persist($reference);
         }
 
-        $host = new User('host@example.com', 'temporary-password', 'Alice', 'Martin', $active, $verifiedAge, $france);
-        $traveler = new User('traveler@example.com', 'temporary-password', 'Mehdi', 'Bernard', $active, $pendingAge, $france);
-        $admin = new User('admin@example.com', 'temporary-password', 'Admin', 'Airbnb', $active, $verifiedAge, $france);
-        $admin->setRoles(['ROLE_ADMIN']);
+        $host = $this->createUser('host@example.com', 'Alice', 'Martin', $active, $verifiedAge, $france);
+        $traveler = $this->createUser('traveler@example.com', 'Mehdi', 'Bernard', $active, $pendingAge, $france);
+        $admin = $this->createUser('admin@example.com', 'Admin', 'Airbnb', $active, $verifiedAge, $france, ['ROLE_ADMIN']);
 
         foreach ([$host, $traveler, $admin] as $user) {
-            $user->setRoles($user === $admin ? ['ROLE_ADMIN'] : ['ROLE_USER']);
             $user->acceptTerms(new \DateTimeImmutable('-1 day'));
             $user->addLanguage($french);
-            $userPassword = $this->passwordHasher->hashPassword($user, 'Password123!');
-            $user->setPassword($userPassword);
-            $this->entityManager->persist($user);
+            $manager->persist($user);
         }
 
         $loft = new Property($host, $france, $apartment, $published, 'Loft lumineux centre-ville', 'Logement de demonstration proche des transports.', '12 rue de Paris', 'Lyon', '69002', 120);
-        $loft->updateCapacity(4, 2, 1, 2, 65)->updateFees(300, 45, 120, 140)->setPetsAllowed(true)->publish(new \DateTimeImmutable('-2 days'));
-        $loft->addEquipment($wifi)->addEquipment($kitchen);
+        $loft
+            ->updateCapacity(4, 2, 1, 2, 65)
+            ->updateFees(300, 45, 120, 140)
+            ->setPetsAllowed(true)
+            ->publish(new \DateTimeImmutable('-2 days'))
+            ->addEquipment($wifi)
+            ->addEquipment($kitchen);
 
         $houseProperty = new Property($host, $france, $house, $draft, 'Maison calme avec jardin', 'Maison familiale de demonstration.', '8 avenue des Pins', 'Nantes', '44000', 95);
-        $houseProperty->updateCapacity(6, 3, 2, 4, 110)->updateFees(500, 70, 95, 115)->addEquipment($parking);
+        $houseProperty
+            ->updateCapacity(6, 3, 2, 4, 110)
+            ->updateFees(500, 70, 95, 115)
+            ->addEquipment($parking);
 
         foreach ([$loft, $houseProperty] as $property) {
-            $this->entityManager->persist($property);
+            $manager->persist($property);
         }
 
-        $this->entityManager->persist(new PropertyImage($loft, 'fixtures/loft-main.jpg', 1, true));
-        $this->entityManager->persist(new PropertyImage($loft, 'fixtures/loft-living-room.jpg', 2));
-        $this->entityManager->persist(new PropertyImage($houseProperty, 'fixtures/house-main.jpg', 1, true));
+        $manager->persist(new PropertyImage($loft, 'fixtures/loft-main.jpg', 1, true));
+        $manager->persist(new PropertyImage($loft, 'fixtures/loft-living-room.jpg', 2));
+        $manager->persist(new PropertyImage($houseProperty, 'fixtures/house-main.jpg', 1, true));
 
-        $this->entityManager->persist(new Booking(
+        $manager->persist(new Booking(
             $bookingPending,
             $loft,
             $traveler,
@@ -146,10 +138,23 @@ class LoadFixturesCommand extends Command
             705,
         ));
 
-        $this->entityManager->flush();
+        $manager->flush();
+    }
 
-        $output->writeln('Fixtures de phase 1 chargees.');
+    /** @param list<string> $roles */
+    private function createUser(
+        string $email,
+        string $firstname,
+        string $lastname,
+        UserStatus $status,
+        AgeVerificationStatus $ageVerificationStatus,
+        Country $country,
+        array $roles = ['ROLE_USER'],
+    ): User {
+        $user = new User($email, 'temporary-password', $firstname, $lastname, $status, $ageVerificationStatus, $country);
+        $user->setRoles($roles);
+        $user->setPassword($this->passwordHasher->hashPassword($user, 'Password123!'));
 
-        return Command::SUCCESS;
+        return $user;
     }
 }
