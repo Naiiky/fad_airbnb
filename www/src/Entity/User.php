@@ -167,6 +167,41 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    public function getFirstname(): string
+    {
+        return $this->firstname;
+    }
+
+    public function getLastname(): string
+    {
+        return $this->lastname;
+    }
+
+    public function getBirthDate(): ?\DateTimeImmutable
+    {
+        return $this->birthDate;
+    }
+
+    public function isEmailVerified(): bool
+    {
+        return $this->emailVerified;
+    }
+
+    public function getTermAcceptedAt(): ?\DateTimeImmutable
+    {
+        return $this->termAcceptedAt;
+    }
+
+    public function getStatus(): UserStatus
+    {
+        return $this->status;
+    }
+
     public function setProfile(
         string $firstname,
         string $lastname,

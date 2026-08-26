@@ -1,0 +1,29 @@
+{
+    "devDependencies": {
+        "@babel/core": "^8.0.0",
+        "@babel/preset-env": "^8.0.0",
+        "@hotwired/stimulus": "^3.0.0",
+        "@hotwired/turbo": "^7.1.0 || ^8.0",
+        "@symfony/ux-turbo": "file:vendor/symfony/ux-turbo/assets",
+        "@symfony/webpack-encore": "^7.0.0",
+        "babel-plugin-polyfill-corejs3": "^1.0.0",
+        "core-js": "^3.49.0",
+        "webpack": "^5.82",
+        "webpack-cli": "^7.0.0"
+    },
+    "license": "UNLICENSED",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev-server": "node ./node_modules/@symfony/webpack-encore/dist/bin/encore.js dev-server",
+        "dev": "node ./node_modules/@symfony/webpack-encore/dist/bin/encore.js dev",
+        "watch": "node ./node_modules/@symfony/webpack-encore/dist/bin/encore.js dev --watch",
+        "build": "node ./node_modules/@symfony/webpack-encore/dist/bin/encore.js production --progress"
+    },
+    "dependencies": {
+        "@tailwindcss/postcss": "^4.3.3",
+        "postcss": "^8.5.26",
+        "postcss-loader": "^8.2.1",
+        "tailwindcss": "^4.3.3"
+    }
+}

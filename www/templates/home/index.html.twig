@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Havre{% endblock %}
+
+{% block body %}
+    <main class="grid min-h-[calc(100vh-72px)] place-items-center px-6 py-12">
+        <section class="w-full max-w-[760px] text-center">
+            <p class="font-serif text-2xl font-semibold text-[#154539]">Havre</p>
+            <h1 class="mt-5 font-serif text-4xl font-semibold leading-tight text-[#1c1c19] md:text-6xl">Bienvenue sur Havre</h1>
+            {% if app.user %}
+                <p class="mx-auto mt-5 max-w-[560px] text-base leading-7 text-[#404945]">Vous êtes connecté avec {{ app.user.userIdentifier }}.</p>
+            {% else %}
+                <p class="mx-auto mt-5 max-w-[560px] text-base leading-7 text-[#404945]">Connectez-vous ou créez votre compte pour gérer vos voyages.</p>
+                <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+                    <a class="inline-flex min-h-[48px] items-center justify-center rounded-[10px] bg-[#2f5d50] px-6 text-sm font-semibold text-white transition hover:bg-[#154539]" href="{{ path('app_register') }}">Créer un compte</a>
+                    <a class="inline-flex min-h-[48px] items-center justify-center rounded-[10px] border border-[#c0c8c4] px-6 text-sm font-semibold text-[#154539] transition hover:border-[#154539]" href="{{ path('app_login') }}">Se connecter</a>
+                </div>
+            {% endif %}
+        </section>
+    </main>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block auth_layout %}{% endblock %}
+
+{% block title %}Connexion | Havre{% endblock %}
+
+{% block body %}
+    <main class="flex min-h-screen bg-[#fcf9f4]">
+        <section class="grid min-h-screen w-full place-items-center px-5 py-8 lg:w-[48%] lg:px-10" aria-labelledby="login-title">
+            <div class="w-full max-w-[420px] rounded-[12px] border border-[#154539]/10 bg-[#fcf9f4]/96 p-6 shadow-[0_20px_70px_rgba(21,69,57,0.12)] sm:p-8 lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none">
+                <a class="font-serif text-2xl font-semibold leading-[1.3] text-[#154539]" href="{{ path('app_home') }}">Havre</a>
+
+                <header class="mt-10">
+                    <h1 id="login-title" class="font-serif text-[42px] font-semibold leading-[1.05] text-[#1c1c19] sm:text-[56px]">Bon retour parmi nous</h1>
+                    <p class="mt-4 text-base leading-7 text-[#404945]">Veuillez vous connecter pour accéder à vos voyages et messages.</p>
+                </header>
+
+                {% if error %}
+                    <div class="mt-6 rounded-[10px] border border-[#ba1a1a]/25 bg-[#ffdad6]/22 px-4 py-3 text-sm font-medium leading-6 text-[#ba1a1a]" role="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% endif %}
+
+                <form class="mt-8 grid gap-5" method="post" action="{{ path('app_login') }}">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                    <div class="grid gap-2">
+                        <label class="text-xs font-medium leading-none text-[#1c1c19]" for="inputEmail">Adresse email</label>
+                        <input class="min-h-[52px] w-full rounded-[4px] border border-[#c0c8c4] bg-[#fcf9f4] px-[17px] py-[13px] text-base text-[#1c1c19] outline-none transition placeholder:text-[#717975] focus:border-[#2f5d50] focus:ring-[3px] focus:ring-[#2f5d50]/12" type="email" value="{{ last_username }}" name="_username" id="inputEmail" placeholder="nom@exemple.com" autocomplete="email" required autofocus>
+                    </div>
+
+                    <div class="grid gap-2">
+                        <div class="flex items-center justify-between gap-4">
+                            <label class="text-xs font-medium leading-none text-[#1c1c19]" for="inputPassword">Mot de passe</label>
+                            <a class="text-xs font-medium text-[#154539] underline-offset-4 hover:underline" href="#">Mot de passe oublié ?</a>
+                        </div>
+                        <input class="min-h-[52px] w-full rounded-[4px] border border-[#c0c8c4] bg-[#fcf9f4] px-[17px] py-[13px] text-base text-[#1c1c19] outline-none transition placeholder:text-[#717975] focus:border-[#2f5d50] focus:ring-[3px] focus:ring-[#2f5d50]/12" type="password" name="_password" id="inputPassword" placeholder="••••••••" autocomplete="current-password" required>
+                    </div>
+
+                    <button class="inline-flex min-h-[54px] w-full items-center justify-center rounded-[10px] bg-[#2f5d50] px-6 text-base font-semibold text-white transition hover:bg-[#154539] focus:outline-none focus:ring-[3px] focus:ring-[#2f5d50]/18" type="submit">Connexion</button>
+                </form>
+
+                <div class="my-7 flex items-center gap-4 text-xs font-medium uppercase tracking-[0.2em] text-[#717975]">
+                    <span class="h-px flex-1 bg-[#c0c8c4]"></span>
+                    <span>ou</span>
+                    <span class="h-px flex-1 bg-[#c0c8c4]"></span>
+                </div>
+                <p class="text-center text-sm text-[#404945]">Nouveau sur Havre ? <a class="font-semibold text-[#154539] underline-offset-4 hover:underline" href="{{ path('app_register') }}">Créer un compte</a></p>
+            </div>
+        </section>
+
+        <section class="relative hidden min-w-0 flex-1 overflow-hidden bg-[#f0ede9] lg:block" aria-hidden="true">
+            <img class="absolute inset-0 h-full w-full object-cover" src="{{ asset('images/auth/login-editorial.png') }}" alt="">
+            <div class="absolute inset-0 bg-gradient-to-r from-[#fcf9f4]/40 via-transparent to-black/20"></div>
+        </section>
+    </main>
+{% endblock %}

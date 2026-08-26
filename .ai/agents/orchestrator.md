@@ -18,4 +18,6 @@
 
 **RULE LOADING** — Pour toute tâche touchant un upload, une transformation ou un stockage d'image utilisateur, ajouter le flag `FILE_UPLOAD`, charger `../rules/image-upload-webp.md` et l'inclure dans les context packets des agents concernés.
 
-**REFERENCES** — `../protocol/state-machine.md`, `../rules/routing.md`, `../rules/image-upload-webp.md`, `../templates/task-state.md`, `../templates/task-graph.md`, `../protocol/findings.md`.
+**UI RULE LOADING** — Pour toute tâche UI ou frontend, charger `../rules/tailwind-design.md`; si une frame Figma est fournie ou déjà retenue comme référence, charger aussi le workflow UI et imposer la traduction Figma -> Symfony/Twig/Tailwind.
+
+**REFERENCES** — `../protocol/state-machine.md`, `../rules/routing.md`, `../rules/image-upload-webp.md`, `../rules/tailwind-design.md`, `../templates/task-state.md`, `../templates/task-graph.md`, `../protocol/findings.md`.
