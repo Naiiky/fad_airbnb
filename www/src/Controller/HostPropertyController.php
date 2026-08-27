@@ -6,6 +6,7 @@ use App\Entity\Country;
 use App\Entity\Equipment;
 use App\Entity\Property;
 use App\Entity\PropertyCategory;
+use App\Entity\PropertyImage;
 use App\Entity\PropertyStatus;
 use App\Entity\User;
 use App\Form\PropertyFormType;
@@ -15,9 +16,13 @@ use App\Repository\PropertyRepository;
 use App\Repository\PropertyStatusRepository;
 use App\Security\AgeMajorityChecker;
 use App\Security\PropertyVoter;
+use App\Upload\PropertyImageUploader;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -30,6 +35,7 @@ class HostPropertyController extends AbstractController
 {
     public function __construct(
         private readonly AgeMajorityChecker $ageMajorityChecker,
+        private readonly PropertyImageUploader $propertyImageUploader,
     ) {
     }
 
@@ -74,8 +80,24 @@ class HostPropertyController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $property->setStatus($draftStatus);
             $this->syncEquipments($property, $this->normalizeEquipments($form->get('equipments')->getData()));
-            $entityManager->persist($property);
-            $entityManager->flush();
+            $uploadedPaths = [];
+
+            try {
+                $uploadedPaths = $this->addUploadedImages($property, $form);
+                $entityManager->persist($property);
+                $entityManager->flush();
+            } catch (\RuntimeException $exception) {
+                $this->removeStoredImages($uploadedPaths);
+                $form->get('images')->addError(new FormError($exception->getMessage()));
+
+                return $this->render('host/property/form.html.twig', [
+                    'propertyForm' => $form,
+                    'property' => $property,
+                    'title' => 'Créer un logement',
+                    'submitLabel' => 'Créer le brouillon',
+                    'canManageImages' => false,
+                ], new Response(Response::HTTP_UNPROCESSABLE_ENTITY));
+            }
 
             $this->addFlash('success', 'Votre logement a été créé en brouillon.');
 
@@ -87,6 +109,7 @@ class HostPropertyController extends AbstractController
             'property' => $property,
             'title' => 'Créer un logement',
             'submitLabel' => 'Créer le brouillon',
+            'canManageImages' => false,
         ], new Response($form->isSubmitted() ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK));
     }
 
@@ -101,7 +124,23 @@ class HostPropertyController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->syncEquipments($property, $this->normalizeEquipments($form->get('equipments')->getData()));
-            $entityManager->flush();
+            $uploadedPaths = [];
+
+            try {
+                $uploadedPaths = $this->addUploadedImages($property, $form);
+                $entityManager->flush();
+            } catch (\RuntimeException $exception) {
+                $this->removeStoredImages($uploadedPaths);
+                $form->get('images')->addError(new FormError($exception->getMessage()));
+
+                return $this->render('host/property/form.html.twig', [
+                    'propertyForm' => $form,
+                    'property' => $property,
+                    'title' => 'Modifier le logement',
+                    'submitLabel' => 'Enregistrer',
+                    'canManageImages' => true,
+                ], new Response(Response::HTTP_UNPROCESSABLE_ENTITY));
+            }
 
             $this->addFlash('success', 'Votre logement a été mis à jour.');
 
@@ -113,7 +152,54 @@ class HostPropertyController extends AbstractController
             'property' => $property,
             'title' => 'Modifier le logement',
             'submitLabel' => 'Enregistrer',
+            'canManageImages' => true,
         ], new Response($form->isSubmitted() ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK));
+    }
+
+    #[Route('/{id}/images/reorder', name: 'images_reorder', methods: ['POST'])]
+    public function reorderImages(Request $request, Property $property, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted(PropertyVoter::EDIT, $property);
+        $this->validateCsrfToken($request, 'reorder_property_images_'.$property->getId());
+
+        $imageIds = $request->request->all('images');
+        $property->reorderImages(array_values(array_filter($imageIds, static fn (mixed $imageId): bool => \is_string($imageId) && '' !== $imageId)));
+        $entityManager->flush();
+
+        $this->addFlash('success', "L'ordre des photos a ete mis a jour.");
+
+        return $this->redirectToRoute('app_host_property_edit', ['id' => $property->getId()]);
+    }
+
+    #[Route('/{id}/images/{imageId}/cover', name: 'images_cover', methods: ['POST'])]
+    public function setCoverImage(Request $request, Property $property, string $imageId, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted(PropertyVoter::EDIT, $property);
+        $this->validateCsrfToken($request, 'cover_property_image_'.$imageId);
+
+        $property->setMainImage($this->getPropertyImage($property, $imageId));
+        $entityManager->flush();
+
+        $this->addFlash('success', 'La photo de couverture a ete mise a jour.');
+
+        return $this->redirectToRoute('app_host_property_edit', ['id' => $property->getId()]);
+    }
+
+    #[Route('/{id}/images/{imageId}/delete', name: 'images_delete', methods: ['POST'])]
+    public function deleteImage(Request $request, Property $property, string $imageId, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted(PropertyVoter::EDIT, $property);
+        $this->validateCsrfToken($request, 'delete_property_image_'.$imageId);
+
+        $image = $this->getPropertyImage($property, $imageId);
+        $storedPath = $image->getImage();
+        $property->removeImage($image);
+        $entityManager->flush();
+        $this->propertyImageUploader->remove($storedPath);
+
+        $this->addFlash('success', 'La photo a ete supprimee.');
+
+        return $this->redirectToRoute('app_host_property_edit', ['id' => $property->getId()]);
     }
 
     #[Route('/{id}/publish', name: 'publish', methods: ['POST'])]
@@ -250,6 +336,51 @@ class HostPropertyController extends AbstractController
         foreach ($selectedEquipments as $equipment) {
             $property->addEquipment($equipment);
         }
+    }
+
+    /**
+     * @param FormInterface<Property> $form
+     *
+     * @return list<string>
+     */
+    private function addUploadedImages(Property $property, FormInterface $form): array
+    {
+        $uploadedPaths = [];
+        $files = $form->get('images')->getData();
+        if (!\is_array($files)) {
+            return $uploadedPaths;
+        }
+
+        foreach ($files as $file) {
+            if (!$file instanceof UploadedFile) {
+                continue;
+            }
+
+            $storedPath = $this->propertyImageUploader->upload($property, $file);
+            $uploadedPaths[] = $storedPath;
+            $property->addImage($storedPath);
+        }
+
+        return $uploadedPaths;
+    }
+
+    /** @param list<string> $storedPaths */
+    private function removeStoredImages(array $storedPaths): void
+    {
+        foreach ($storedPaths as $storedPath) {
+            $this->propertyImageUploader->remove($storedPath);
+        }
+    }
+
+    private function getPropertyImage(Property $property, string $imageId): PropertyImage
+    {
+        foreach ($property->getImages() as $image) {
+            if ($image->getId() === $imageId) {
+                return $image;
+            }
+        }
+
+        throw $this->createNotFoundException('Photo introuvable.');
     }
 
     private function isComplete(Property $property): bool

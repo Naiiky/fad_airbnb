@@ -1,0 +1,19 @@
+<section class="rounded-[12px] border border-[#154539]/10 bg-white/60 p-6" data-controller="property-images">
+    <h2 class="font-serif text-3xl font-semibold text-[#1c1c19]">Photos</h2>
+
+    <div class="mt-6 grid gap-3">
+        {{ form_label(propertyForm.images, null, { label_attr: { class: label_class ~ (propertyForm.images.vars.errors|length ? ' text-[#ba1a1a]' : '') } }) }}
+        {{ form_widget(propertyForm.images, {
+            attr: {
+                class: file_class ~ (propertyForm.images.vars.errors|length ? ' border-[#ba1a1a] bg-[#ffdad6]/10 focus:ring-[#ba1a1a]/12' : ''),
+                accept: 'image/jpeg,image/png,image/webp',
+                'data-property-images-target': 'fileInput',
+                'data-action': 'property-images#previewUploads'
+            }
+        }) }}
+        {% for error in propertyForm.images.vars.errors %}
+            <p class="{{ error_class }}">{{ error.message }}</p>
+        {% endfor %}
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" data-property-images-target="preview"></div>
+    </div>
+</section>

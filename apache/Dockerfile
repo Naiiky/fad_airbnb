@@ -3,7 +3,7 @@ FROM php:8.4-apache
 
 # Arguments pour les versions
 ARG NVM_VERSION=0.39.7
-ARG NODE_VERSION=20
+ARG NODE_VERSION=22
 
 # 2. SYSTÈME ET DÉPENDANCES
 # Installation des outils système et des dépendances nécessaires

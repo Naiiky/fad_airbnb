@@ -75,6 +75,7 @@ class Booking
         int $cleaningFee,
         int $deposit,
         int $totalAmount,
+        int $childrenCount = 0,
     ) {
         $this->initializeId();
         $this->status = $status;
@@ -83,6 +84,7 @@ class Booking
         $this->checkIn = $checkIn;
         $this->checkOut = $checkOut;
         $this->adultCount = $adultCount;
+        $this->childrenCount = $childrenCount;
         $this->nightSubtotal = $nightSubtotal;
         $this->cleaningFee = $cleaningFee;
         $this->deposit = $deposit;
@@ -97,6 +99,56 @@ class Booking
     public function getCheckOut(): \DateTimeImmutable
     {
         return $this->checkOut;
+    }
+
+    public function getAdultCount(): int
+    {
+        return $this->adultCount;
+    }
+
+    public function getChildrenCount(): int
+    {
+        return $this->childrenCount;
+    }
+
+    public function getGuestCount(): int
+    {
+        return $this->adultCount + $this->childrenCount;
+    }
+
+    public function getNightSubtotal(): int
+    {
+        return $this->nightSubtotal;
+    }
+
+    public function getCleaningFee(): int
+    {
+        return $this->cleaningFee;
+    }
+
+    public function getDeposit(): int
+    {
+        return $this->deposit;
+    }
+
+    public function getTotalAmount(): int
+    {
+        return $this->totalAmount;
+    }
+
+    public function getStatus(): BookingStatus
+    {
+        return $this->status;
+    }
+
+    public function getProperty(): Property
+    {
+        return $this->property;
+    }
+
+    public function getUser(): User
+    {
+        return $this->user;
     }
 
     public function cancel(string $reason, \DateTimeImmutable $date): self

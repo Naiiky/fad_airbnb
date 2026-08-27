@@ -1,0 +1,39 @@
+{% set main_image = property.mainImage %}
+
+<article class="overflow-hidden rounded-[12px] border border-[#154539]/10 bg-white/75 shadow-[0_20px_70px_rgba(21,69,57,0.07)]">
+    <div class="aspect-[4/3] bg-[#e8eee9]">
+        {% if main_image %}
+            <img class="h-full w-full object-cover" src="{{ asset('uploads/properties/' ~ main_image.image) }}" alt="Photo de {{ property.title }}">
+        {% else %}
+            <div class="flex h-full w-full items-center justify-center px-4 text-center text-sm font-semibold text-[#717975]">Photo a venir</div>
+        {% endif %}
+    </div>
+
+    <div class="grid gap-4 p-5">
+        <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-[#717975]">{{ property.category.label }}</p>
+            <h2 class="mt-2 font-serif text-2xl font-semibold leading-tight text-[#1c1c19]">{{ property.title }}</h2>
+            <p class="mt-2 text-sm leading-6 text-[#404945]">{{ property.city }}, {{ property.country.label }}</p>
+        </div>
+
+        <dl class="grid grid-cols-3 gap-3 text-sm text-[#404945]">
+            <div>
+                <dt class="text-xs font-semibold uppercase tracking-[0.12em] text-[#717975]">Voyageurs</dt>
+                <dd class="mt-1 font-semibold text-[#1c1c19]">{{ property.maxGuest }}</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-semibold uppercase tracking-[0.12em] text-[#717975]">Chambres</dt>
+                <dd class="mt-1 font-semibold text-[#1c1c19]">{{ property.bedrooms }}</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-semibold uppercase tracking-[0.12em] text-[#717975]">Surface</dt>
+                <dd class="mt-1 font-semibold text-[#1c1c19]">{{ property.areaM2 }} m2</dd>
+            </div>
+        </dl>
+
+        <div class="flex items-end justify-between gap-4 border-t border-[#154539]/10 pt-4">
+            <p class="text-sm text-[#404945]"><span class="text-lg font-semibold text-[#1c1c19]">{{ property.nightlyPrice }} EUR</span> / nuit</p>
+            <a class="inline-flex min-h-[42px] items-center justify-center rounded-[10px] border border-[#c0c8c4] px-4 text-sm font-semibold text-[#154539] transition hover:border-[#154539]" href="{{ path('app_property_show', { id: property.id }) }}">Voir</a>
+        </div>
+    </div>
+</article>

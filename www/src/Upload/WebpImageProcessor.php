@@ -13,7 +13,7 @@ class WebpImageProcessor
     ) {
     }
 
-    public function process(File $source): string
+    public function process(File $source, ?int $maxWidth = null, ?int $maxHeight = null): string
     {
         if (!\extension_loaded('gd') || true !== (gd_info()['WebP Support'] ?? false)) {
             throw new \RuntimeException('La conversion WebP n’est pas disponible sur ce serveur.');
@@ -32,7 +32,9 @@ class WebpImageProcessor
         try {
             $width = imagesx($image);
             $height = imagesy($image);
-            $ratio = min(1, $this->maxWidth / $width, $this->maxHeight / $height);
+            $targetMaxWidth = $maxWidth ?? $this->maxWidth;
+            $targetMaxHeight = $maxHeight ?? $this->maxHeight;
+            $ratio = min(1, $targetMaxWidth / $width, $targetMaxHeight / $height);
             $targetWidth = max(1, (int) floor($width * $ratio));
             $targetHeight = max(1, (int) floor($height * $ratio));
 

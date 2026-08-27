@@ -1,0 +1,58 @@
+{% set images = property.images %}
+
+<section class="rounded-[12px] border border-[#154539]/10 bg-white/60 p-6" data-controller="property-images">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+            <h2 class="font-serif text-3xl font-semibold text-[#1c1c19]">Photos</h2>
+        </div>
+
+        {% if property.id and images|length > 0 %}
+            <form id="property-images-order-form" method="post" action="{{ path('app_host_property_images_reorder', { id: property.id }) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('reorder_property_images_' ~ property.id) }}">
+                {% if images|length > 1 %}
+                    <button class="inline-flex min-h-[44px] items-center justify-center rounded-[10px] border border-[#c0c8c4] px-5 text-sm font-semibold text-[#154539] transition hover:border-[#154539]" type="submit">
+                        Enregistrer l'ordre
+                    </button>
+                {% endif %}
+            </form>
+        {% endif %}
+    </div>
+
+    {% if images|length %}
+        <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4" data-property-images-target="list">
+            {% for image in images %}
+                <article class="group overflow-hidden rounded-[10px] border border-[#154539]/10 bg-[#fcf9f4]" data-property-images-target="item">
+                    {% if property.id %}
+                        <input data-property-images-target="input" form="property-images-order-form" type="hidden" name="images[]" value="{{ image.id }}">
+                    {% endif %}
+                    <div class="relative aspect-[4/3] bg-[#e8eee9]">
+                        <img class="h-full w-full object-cover" src="{{ asset('uploads/properties/' ~ image.image) }}" alt="Photo de {{ property.title }}">
+                        {% if image.main %}
+                            <span class="absolute left-3 top-3 rounded-full bg-[#154539] px-3 py-1 text-xs font-semibold text-white">Couverture</span>
+                        {% endif %}
+                    </div>
+                    <div class="grid gap-3 p-3">
+                        {% if property.id %}
+                            <div class="grid grid-cols-2 gap-2">
+                                <button class="inline-flex min-h-[40px] items-center justify-center rounded-[8px] border border-[#c0c8c4] text-sm font-semibold text-[#154539] transition hover:border-[#154539]" type="button" data-action="property-images#moveUp">Monter</button>
+                                <button class="inline-flex min-h-[40px] items-center justify-center rounded-[8px] border border-[#c0c8c4] text-sm font-semibold text-[#154539] transition hover:border-[#154539]" type="button" data-action="property-images#moveDown">Descendre</button>
+                            </div>
+                            <div class="grid gap-2">
+                                {% if not image.main %}
+                                    <form method="post" action="{{ path('app_host_property_images_cover', { id: property.id, imageId: image.id }) }}">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('cover_property_image_' ~ image.id) }}">
+                                        <button class="inline-flex min-h-[40px] w-full items-center justify-center rounded-[8px] bg-[#2f5d50] px-3 text-sm font-semibold text-white transition hover:bg-[#154539]" type="submit">Definir en couverture</button>
+                                    </form>
+                                {% endif %}
+                                <form method="post" action="{{ path('app_host_property_images_delete', { id: property.id, imageId: image.id }) }}" onsubmit="return confirm('Supprimer cette photo ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_property_image_' ~ image.id) }}">
+                                    <button class="inline-flex min-h-[40px] w-full items-center justify-center rounded-[8px] border border-[#ba1a1a]/30 px-3 text-sm font-semibold text-[#ba1a1a] transition hover:border-[#ba1a1a]" type="submit">Supprimer</button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% endif %}
+</section>

@@ -30,4 +30,45 @@ class PropertyImage
         $this->displayOrder = $displayOrder;
         $this->isMain = $isMain;
     }
+
+    public function getImage(): string
+    {
+        return $this->image;
+    }
+
+    public function setImage(string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function getDisplayOrder(): int
+    {
+        return $this->displayOrder;
+    }
+
+    public function setDisplayOrder(int $displayOrder): self
+    {
+        $this->displayOrder = $displayOrder;
+
+        return $this;
+    }
+
+    public function isMain(): bool
+    {
+        return $this->isMain;
+    }
+
+    public function setMain(bool $isMain): self
+    {
+        $this->isMain = $isMain;
+
+        return $this;
+    }
+
+    public function getProperty(): Property
+    {
+        return $this->property;
+    }
 }

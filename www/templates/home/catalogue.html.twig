@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Catalogue | Havre{% endblock %}
+
+{% block body %}
+    <main class="mx-auto grid w-full max-w-[1180px] gap-8 px-6 py-10 md:px-10">
+        <section class="grid gap-5">
+            <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                <div>
+                    <p class="text-sm font-semibold uppercase tracking-[0.18em] text-[#2f5d50]">Catalogue</p>
+                    <h1 class="mt-3 font-serif text-4xl font-semibold leading-tight text-[#1c1c19] md:text-5xl">Logements disponibles</h1>
+                </div>
+                <p class="text-sm font-medium text-[#404945]">{{ pagination.total }} logement{{ pagination.total > 1 ? 's' : '' }} publie{{ pagination.total > 1 ? 's' : '' }}</p>
+            </div>
+
+            {% include 'home/_catalogue_filters.html.twig' with {
+                search: search,
+                categories: categories
+            } only %}
+        </section>
+
+        {% if pagination.items|length %}
+            <section class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {% for property in pagination.items %}
+                    {% include 'home/_property_card.html.twig' with { property: property } only %}
+                {% endfor %}
+            </section>
+
+            {% if pagination.totalPages > 1 %}
+                <nav class="flex flex-wrap items-center justify-center gap-2" aria-label="Pagination catalogue">
+                    {% set previous_page = pagination.page - 1 %}
+                    {% set next_page = pagination.page + 1 %}
+                    {% set page_start = max(1, pagination.page - 2) %}
+                    {% set page_end = min(pagination.totalPages, pagination.page + 2) %}
+
+                    <a class="inline-flex min-h-[42px] items-center justify-center rounded-[10px] border border-[#c0c8c4] px-4 text-sm font-semibold text-[#154539] transition {{ pagination.page == 1 ? 'pointer-events-none opacity-45' : 'hover:border-[#154539]' }}" href="{{ path('app_catalogue', search.toQueryParameters(previous_page)) }}">Precedent</a>
+
+                    {% for page in page_start..page_end %}
+                        <a class="inline-flex min-h-[42px] min-w-[42px] items-center justify-center rounded-[10px] border px-4 text-sm font-semibold transition {{ page == pagination.page ? 'border-[#154539] bg-[#154539] text-white' : 'border-[#c0c8c4] text-[#154539] hover:border-[#154539]' }}" href="{{ path('app_catalogue', search.toQueryParameters(page)) }}">{{ page }}</a>
+                    {% endfor %}
+
+                    <a class="inline-flex min-h-[42px] items-center justify-center rounded-[10px] border border-[#c0c8c4] px-4 text-sm font-semibold text-[#154539] transition {{ pagination.page >= pagination.totalPages ? 'pointer-events-none opacity-45' : 'hover:border-[#154539]' }}" href="{{ path('app_catalogue', search.toQueryParameters(next_page)) }}">Suivant</a>
+                </nav>
+            {% endif %}
+        {% else %}
+            <section class="rounded-[12px] border border-[#154539]/10 bg-white/70 px-6 py-12 text-center">
+                <h2 class="font-serif text-3xl font-semibold text-[#1c1c19]">Aucun logement trouve</h2>
+                <p class="mx-auto mt-3 max-w-[520px] text-sm leading-6 text-[#404945]">Essayez une autre ville ou une autre categorie.</p>
+            </section>
+        {% endif %}
+    </main>
+{% endblock %}

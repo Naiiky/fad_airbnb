@@ -94,6 +94,7 @@ class Property
 
     /** @var Collection<int, PropertyImage> */
     #[ORM\OneToMany(mappedBy: 'property', targetEntity: PropertyImage::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['displayOrder' => 'ASC'])]
     private Collection $images;
 
     /** @var Collection<int, PropertyEquipment> */
@@ -265,6 +266,93 @@ class Property
         }
 
         return $this;
+    }
+
+    public function addImage(string $image): PropertyImage
+    {
+        $propertyImage = new PropertyImage($this, $image, $this->images->count(), $this->images->isEmpty());
+        $this->images->add($propertyImage);
+        $this->touch();
+
+        return $propertyImage;
+    }
+
+    public function removeImage(PropertyImage $image): self
+    {
+        if (!$this->images->contains($image)) {
+            return $this;
+        }
+
+        $wasMain = $image->isMain();
+        $this->images->removeElement($image);
+        $this->normalizeImageOrder();
+
+        if ($wasMain && !$this->images->isEmpty()) {
+            $this->setMainImage($this->images->first());
+        }
+
+        $this->touch();
+
+        return $this;
+    }
+
+    public function setMainImage(PropertyImage $mainImage): self
+    {
+        if (!$this->images->contains($mainImage)) {
+            throw new \InvalidArgumentException('Cette image n appartient pas au logement.');
+        }
+
+        foreach ($this->images as $image) {
+            $image->setMain($image === $mainImage);
+        }
+
+        $this->touch();
+
+        return $this;
+    }
+
+    /** @param list<string> $orderedImageIds */
+    public function reorderImages(array $orderedImageIds): self
+    {
+        $imagesById = [];
+        foreach ($this->images as $image) {
+            if (null !== $image->getId()) {
+                $imagesById[$image->getId()] = $image;
+            }
+        }
+
+        $position = 0;
+        foreach ($orderedImageIds as $imageId) {
+            if (isset($imagesById[$imageId])) {
+                $imagesById[$imageId]->setDisplayOrder($position++);
+                unset($imagesById[$imageId]);
+            }
+        }
+
+        foreach ($imagesById as $image) {
+            $image->setDisplayOrder($position++);
+        }
+
+        $this->touch();
+
+        return $this;
+    }
+
+    /** @return Collection<int, PropertyImage> */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function getMainImage(): ?PropertyImage
+    {
+        foreach ($this->images as $image) {
+            if ($image->isMain()) {
+                return $image;
+            }
+        }
+
+        return $this->images->first() ?: null;
     }
 
     /** @return Collection<int, PropertyEquipment> */
@@ -499,6 +587,14 @@ class Property
     public function getStatus(): PropertyStatus
     {
         return $this->status;
+    }
+
+    private function normalizeImageOrder(): void
+    {
+        $position = 0;
+        foreach ($this->images as $image) {
+            $image->setDisplayOrder($position++);
+        }
     }
 
     private function touch(): void

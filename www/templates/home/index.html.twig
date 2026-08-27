@@ -3,17 +3,50 @@
 {% block title %}Havre{% endblock %}
 
 {% block body %}
-    <main class="grid min-h-[calc(100vh-72px)] place-items-center px-6 py-12">
-        <section class="w-full max-w-[760px] text-center">
-            <p class="font-serif text-2xl font-semibold text-[#154539]">Havre</p>
-            <h1 class="mt-5 font-serif text-4xl font-semibold leading-tight text-[#1c1c19] md:text-6xl">Bienvenue sur Havre</h1>
-            {% if app.user %}
-                <p class="mx-auto mt-5 max-w-[560px] text-base leading-7 text-[#404945]">Vous êtes connecté avec {{ app.user.userIdentifier }}.</p>
+    <main class="grid gap-12 px-6 py-10 md:px-10">
+        <section class="mx-auto grid w-full max-w-[1180px] gap-8 lg:grid-cols-[1fr_360px] lg:items-end">
+            <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.18em] text-[#2f5d50]">Havre</p>
+                <h1 class="mt-4 max-w-[760px] font-serif text-5xl font-semibold leading-tight text-[#1c1c19] md:text-6xl">Trouvez un logement publie par nos hotes</h1>
+                <p class="mt-5 max-w-[620px] text-base leading-7 text-[#404945]">Explorez les annonces disponibles et filtrez le catalogue par ville ou par categorie.</p>
+                <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+                    <a class="inline-flex min-h-[50px] items-center justify-center rounded-[10px] bg-[#2f5d50] px-6 text-sm font-semibold text-white transition hover:bg-[#154539]" href="{{ path('app_catalogue') }}">Voir le catalogue</a>
+                    {% if app.user %}
+                        <a class="inline-flex min-h-[50px] items-center justify-center rounded-[10px] border border-[#c0c8c4] px-6 text-sm font-semibold text-[#154539] transition hover:border-[#154539]" href="{{ path('app_host_property_index') }}">Mes logements</a>
+                    {% else %}
+                        <a class="inline-flex min-h-[50px] items-center justify-center rounded-[10px] border border-[#c0c8c4] px-6 text-sm font-semibold text-[#154539] transition hover:border-[#154539]" href="{{ path('app_login') }}">Se connecter</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <form class="rounded-[12px] border border-[#154539]/10 bg-white/70 p-5 shadow-[0_20px_70px_rgba(21,69,57,0.06)]" method="get" action="{{ path('app_catalogue') }}">
+                <label class="grid gap-2">
+                    <span class="text-xs font-medium leading-none text-[#1c1c19]">Ville</span>
+                    <input class="min-h-[50px] w-full rounded-[4px] border border-[#c0c8c4] bg-[#fcf9f4] px-[17px] py-[13px] text-base text-[#1c1c19] outline-none transition placeholder:text-[#717975] focus:border-[#2f5d50] focus:ring-[3px] focus:ring-[#2f5d50]/12" type="search" name="ville" placeholder="Lyon, Nantes, Paris">
+                </label>
+                <button class="mt-4 inline-flex min-h-[50px] w-full items-center justify-center rounded-[10px] bg-[#2f5d50] px-6 text-sm font-semibold text-white transition hover:bg-[#154539]" type="submit">Rechercher</button>
+            </form>
+        </section>
+
+        <section class="mx-auto grid w-full max-w-[1180px] gap-6">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                    <p class="text-sm font-semibold uppercase tracking-[0.18em] text-[#2f5d50]">Dernieres annonces</p>
+                    <h2 class="mt-2 font-serif text-4xl font-semibold text-[#1c1c19]">Logements publies</h2>
+                </div>
+                <a class="inline-flex min-h-[44px] items-center justify-center rounded-[10px] border border-[#c0c8c4] px-5 text-sm font-semibold text-[#154539] transition hover:border-[#154539]" href="{{ path('app_catalogue') }}">Tout voir</a>
+            </div>
+
+            {% if properties|length %}
+                <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    {% for property in properties %}
+                        {% include 'home/_property_card.html.twig' with { property: property } only %}
+                    {% endfor %}
+                </div>
             {% else %}
-                <p class="mx-auto mt-5 max-w-[560px] text-base leading-7 text-[#404945]">Connectez-vous ou créez votre compte pour gérer vos voyages.</p>
-                <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-                    <a class="inline-flex min-h-[48px] items-center justify-center rounded-[10px] bg-[#2f5d50] px-6 text-sm font-semibold text-white transition hover:bg-[#154539]" href="{{ path('app_register') }}">Créer un compte</a>
-                    <a class="inline-flex min-h-[48px] items-center justify-center rounded-[10px] border border-[#c0c8c4] px-6 text-sm font-semibold text-[#154539] transition hover:border-[#154539]" href="{{ path('app_login') }}">Se connecter</a>
+                <div class="rounded-[12px] border border-[#154539]/10 bg-white/70 px-6 py-12 text-center">
+                    <h2 class="font-serif text-3xl font-semibold text-[#1c1c19]">Aucun logement publie</h2>
+                    <p class="mx-auto mt-3 max-w-[520px] text-sm leading-6 text-[#404945]">Les annonces publiees apparaitront ici des qu'elles seront disponibles.</p>
                 </div>
             {% endif %}
         </section>

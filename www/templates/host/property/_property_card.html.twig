@@ -1,4 +1,14 @@
-<article class="grid gap-5 rounded-[12px] border border-[#154539]/10 bg-white/70 p-5 shadow-[0_20px_70px_rgba(21,69,57,0.07)] lg:grid-cols-[1fr_auto] lg:items-center">
+{% set main_image = property.mainImage %}
+
+<article class="grid gap-5 rounded-[12px] border border-[#154539]/10 bg-white/70 p-5 shadow-[0_20px_70px_rgba(21,69,57,0.07)] lg:grid-cols-[180px_1fr_auto] lg:items-center">
+    <div class="aspect-[4/3] overflow-hidden rounded-[10px] bg-[#e8eee9]">
+        {% if main_image %}
+            <img class="h-full w-full object-cover" src="{{ asset('uploads/properties/' ~ main_image.image) }}" alt="Photo de {{ property.title }}">
+        {% else %}
+            <div class="flex h-full w-full items-center justify-center px-4 text-center text-sm font-semibold text-[#717975]">Aucune photo</div>
+        {% endif %}
+    </div>
+
     <div class="min-w-0">
         <div class="flex flex-wrap items-center gap-3">
             <h2 class="font-serif text-2xl font-semibold leading-tight text-[#1c1c19]">{{ property.title }}</h2>

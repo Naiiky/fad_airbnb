@@ -8,6 +8,7 @@
     {% set label_class = 'text-xs font-medium leading-none text-[#1c1c19]' %}
     {% set input_class = 'min-h-[50px] w-full rounded-[4px] border border-[#c0c8c4] bg-[#fcf9f4] px-[17px] py-[13px] text-base text-[#1c1c19] outline-none transition placeholder:text-[#717975] focus:border-[#2f5d50] focus:ring-[3px] focus:ring-[#2f5d50]/12' %}
     {% set textarea_class = input_class ~ ' min-h-[150px] resize-y' %}
+    {% set file_class = 'min-h-[50px] w-full rounded-[4px] border border-[#c0c8c4] bg-[#fcf9f4] px-[17px] py-[13px] text-sm text-[#404945] outline-none transition file:mr-4 file:rounded-[8px] file:border-0 file:bg-[#2f5d50] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white focus:border-[#2f5d50] focus:ring-[3px] focus:ring-[#2f5d50]/12' %}
     {% set error_class = 'text-xs font-medium leading-snug text-[#ba1a1a]' %}
     {% set checkbox_class = 'flex items-center gap-3 rounded-[10px] border border-[#154539]/10 bg-[#fcf9f4] px-4 py-3 text-sm font-medium text-[#404945]' %}
 
@@ -31,6 +32,13 @@
                     </div>
                 </div>
             </section>
+
+            {% include 'host/property/_image_upload.html.twig' with {
+                propertyForm: propertyForm,
+                label_class: label_class,
+                file_class: file_class,
+                error_class: error_class
+            } only %}
 
             <section class="rounded-[12px] border border-[#154539]/10 bg-white/60 p-6">
                 <h2 class="font-serif text-3xl font-semibold text-[#1c1c19]">Capacite</h2>
@@ -85,5 +93,11 @@
 
             {{ form_rest(propertyForm) }}
         {{ form_end(propertyForm, { render_rest: false }) }}
+
+        {% if canManageImages|default(false) and property.images|length %}
+            {% include 'host/property/_image_manager.html.twig' with {
+                property: property
+            } only %}
+        {% endif %}
     </main>
 {% endblock %}

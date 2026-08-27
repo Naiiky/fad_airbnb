@@ -10,6 +10,7 @@ services:
     volumes:
       # volumes montés
       - ./www:/var/www/html
+      - node_modules:/var/www/html/node_modules
       - ./apache/custom-php.ini:/usr/local/etc/php/conf.d/custom-php.ini
     environment:
       # variables d'environnement
@@ -73,3 +74,4 @@ networks:
 
 volumes:
   mysql: # volume nommé pour persister les données MariaDB
+  node_modules: # dépendances JS Linux isolées du node_modules Windows

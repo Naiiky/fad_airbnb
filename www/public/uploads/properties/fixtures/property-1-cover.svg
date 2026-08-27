@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-label="Photo de logement de fixture">
+  <rect width="1200" height="800" fill="#f5efe4"/>
+  <rect x="80" y="110" width="1040" height="580" rx="28" fill="#d9e6de"/>
+  <rect x="150" y="180" width="410" height="270" rx="18" fill="#fff8ee"/>
+  <rect x="640" y="180" width="330" height="420" rx="18" fill="#154539"/>
+  <circle cx="250" cy="570" r="58" fill="#e1604d"/>
+  <rect x="330" y="540" width="270" height="70" rx="12" fill="#ffffff"/>
+</svg>
