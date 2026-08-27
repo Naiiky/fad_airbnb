@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% import 'partials/_form_macros.html.twig' as ui %}
+
+{% block title %}{{ title }} | Havre{% endblock %}
+
+{% block body %}
+    {% set label_class = 'text-xs font-medium leading-none text-[#1c1c19]' %}
+    {% set input_class = 'min-h-[50px] w-full rounded-[4px] border border-[#c0c8c4] bg-[#fcf9f4] px-[17px] py-[13px] text-base text-[#1c1c19] outline-none transition placeholder:text-[#717975] focus:border-[#2f5d50] focus:ring-[3px] focus:ring-[#2f5d50]/12' %}
+    {% set textarea_class = input_class ~ ' min-h-[150px] resize-y' %}
+    {% set error_class = 'text-xs font-medium leading-snug text-[#ba1a1a]' %}
+    {% set checkbox_class = 'flex items-center gap-3 rounded-[10px] border border-[#154539]/10 bg-[#fcf9f4] px-4 py-3 text-sm font-medium text-[#404945]' %}
+
+    <main class="mx-auto grid w-full max-w-[1040px] gap-8 px-6 py-10 md:px-10">
+        {% include 'host/property/_page_header.html.twig' with {
+            title: title,
+            description: 'Renseignez les informations utiles a la gestion et a la publication de votre annonce.',
+            action_href: path('app_host_property_index'),
+            action_label: 'Retour aux logements'
+        } only %}
+
+        {{ form_start(propertyForm, { attr: { class: 'grid gap-6', novalidate: 'novalidate' } }) }}
+            <section class="rounded-[12px] border border-[#154539]/10 bg-white/60 p-6 shadow-[0_20px_70px_rgba(21,69,57,0.08)]">
+                <h2 class="font-serif text-3xl font-semibold text-[#1c1c19]">Informations generales</h2>
+                <div class="mt-6 grid gap-5">
+                    {{ ui.field(propertyForm.title, label_class, input_class, error_class) }}
+                    {{ ui.field(propertyForm.description, label_class, textarea_class, error_class) }}
+                    <div class="grid gap-5 md:grid-cols-2">
+                        {{ ui.field(propertyForm.category, label_class, input_class, error_class) }}
+                        {{ ui.field(propertyForm.country, label_class, input_class, error_class) }}
+                    </div>
+                </div>
+            </section>
+
+            <section class="rounded-[12px] border border-[#154539]/10 bg-white/60 p-6">
+                <h2 class="font-serif text-3xl font-semibold text-[#1c1c19]">Capacite</h2>
+                <div class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
+                    {{ ui.field(propertyForm.maxGuest, label_class, input_class, error_class) }}
+                    {{ ui.field(propertyForm.bedrooms, label_class, input_class, error_class) }}
+                    {{ ui.field(propertyForm.bathrooms, label_class, input_class, error_class) }}
+                    {{ ui.field(propertyForm.beds, label_class, input_class, error_class) }}
+                    {{ ui.field(propertyForm.areaM2, label_class, input_class, error_class) }}
+                </div>
+            </section>
+
+            <section class="rounded-[12px] border border-[#154539]/10 bg-white/60 p-6">
+                <h2 class="font-serif text-3xl font-semibold text-[#1c1c19]">Adresse</h2>
+                <div class="mt-6 grid gap-5 md:grid-cols-2">
+                    <div class="md:col-span-2">
+                        {{ ui.field(propertyForm.address, label_class, input_class, error_class) }}
+                    </div>
+                    {{ ui.field(propertyForm.city, label_class, input_class, error_class) }}
+                    {{ ui.field(propertyForm.zipCode, label_class, input_class, error_class) }}
+                </div>
+            </section>
+
+            <section class="grid gap-6 lg:grid-cols-[1fr_320px]">
+                <div class="rounded-[12px] border border-[#154539]/10 bg-white/60 p-6">
+                    <h2 class="font-serif text-3xl font-semibold text-[#1c1c19]">Prix</h2>
+                    <div class="mt-6 grid gap-5 md:grid-cols-2">
+                        {{ ui.field(propertyForm.nightlyPrice, label_class, input_class, error_class) }}
+                        {{ ui.field(propertyForm.weekendPrice, label_class, input_class, error_class) }}
+                        {{ ui.field(propertyForm.cleaningFee, label_class, input_class, error_class) }}
+                        {{ ui.field(propertyForm.deposit, label_class, input_class, error_class) }}
+                    </div>
+                </div>
+
+                <div class="rounded-[12px] border border-[#154539]/10 bg-white/60 p-6">
+                    <h2 class="font-serif text-3xl font-semibold text-[#1c1c19]">Equipements</h2>
+                    <div class="mt-6 grid gap-3">
+                        {% for equipment in propertyForm.equipments %}
+                            {{ ui.checkbox_card(equipment, checkbox_class) }}
+                        {% else %}
+                            <p class="text-sm leading-6 text-[#717975]">Aucun equipement disponible.</p>
+                        {% endfor %}
+                    </div>
+                    {{ ui.checkbox_card(propertyForm.petsAllowed, 'mt-5 flex items-center gap-3 rounded-[10px] border border-[#154539]/10 bg-[#fcf9f4] px-4 py-3 text-sm font-semibold text-[#154539]') }}
+                </div>
+            </section>
+
+            <div class="flex flex-col-reverse gap-3 border-t border-[#154539]/12 pt-6 sm:flex-row sm:justify-end">
+                <a class="inline-flex min-h-[50px] items-center justify-center rounded-[10px] border border-[#c0c8c4] px-6 text-sm font-semibold text-[#154539] transition hover:border-[#154539]" href="{{ path('app_host_property_index') }}">Annuler</a>
+                <button class="inline-flex min-h-[50px] items-center justify-center rounded-[10px] bg-[#2f5d50] px-6 text-sm font-semibold text-white transition hover:bg-[#154539] focus:outline-none focus:ring-[3px] focus:ring-[#2f5d50]/18" type="submit">{{ submitLabel }}</button>
+            </div>
+
+            {{ form_rest(propertyForm) }}
+        {{ form_end(propertyForm, { render_rest: false }) }}
+    </main>
+{% endblock %}

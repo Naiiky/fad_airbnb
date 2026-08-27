@@ -169,6 +169,27 @@ class Property
         return $this;
     }
 
+    public function updateDetails(
+        string $title,
+        string $description,
+        string $address,
+        string $city,
+        string $zipCode,
+        Country $country,
+        PropertyCategory $category,
+    ): self {
+        $this->title = $title;
+        $this->description = $description;
+        $this->address = $address;
+        $this->city = $city;
+        $this->zipCode = $zipCode;
+        $this->country = $country;
+        $this->category = $category;
+        $this->touch();
+
+        return $this;
+    }
+
     public function updateFees(int $deposit, int $cleaningFee, int $nightlyPrice, int $weekendPrice): self
     {
         $this->deposit = $deposit;
@@ -191,6 +212,14 @@ class Property
     public function publish(\DateTimeImmutable $publishedAt): self
     {
         $this->publishedAt = $publishedAt;
+        $this->touch();
+
+        return $this;
+    }
+
+    public function setStatus(PropertyStatus $status): self
+    {
+        $this->status = $status;
         $this->touch();
 
         return $this;
@@ -247,6 +276,229 @@ class Property
     public function getUser(): User
     {
         return $this->user;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
+        $this->touch();
+
+        return $this;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
+        $this->touch();
+
+        return $this;
+    }
+
+    public function getMaxGuest(): int
+    {
+        return $this->maxGuest;
+    }
+
+    public function setMaxGuest(int $maxGuest): self
+    {
+        $this->maxGuest = $maxGuest;
+        $this->touch();
+
+        return $this;
+    }
+
+    public function getBedrooms(): int
+    {
+        return $this->bedrooms;
+    }
+
+    public function setBedrooms(int $bedrooms): self
+    {
+        $this->bedrooms = $bedrooms;
+        $this->touch();
+
+        return $this;
+    }
+
+    public function getBathrooms(): int
+    {
+        return $this->bathrooms;
+    }
+
+    public function setBathrooms(int $bathrooms): self
+    {
+        $this->bathrooms = $bathrooms;
+        $this->touch();
+
+        return $this;
+    }
+
+    public function getBeds(): int
+    {
+        return $this->beds;
+    }
+
+    public function setBeds(int $beds): self
+    {
+        $this->beds = $beds;
+        $this->touch();
+
+        return $this;
+    }
+
+    public function getAreaM2(): int
+    {
+        return $this->areaM2;
+    }
+
+    public function setAreaM2(int $areaM2): self
+    {
+        $this->areaM2 = $areaM2;
+        $this->touch();
+
+        return $this;
+    }
+
+    public function getAddress(): string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(string $address): self
+    {
+        $this->address = $address;
+        $this->touch();
+
+        return $this;
+    }
+
+    public function getCity(): string
+    {
+        return $this->city;
+    }
+
+    public function setCity(string $city): self
+    {
+        $this->city = $city;
+        $this->touch();
+
+        return $this;
+    }
+
+    public function getZipCode(): string
+    {
+        return $this->zipCode;
+    }
+
+    public function setZipCode(string $zipCode): self
+    {
+        $this->zipCode = $zipCode;
+        $this->touch();
+
+        return $this;
+    }
+
+    public function getDeposit(): int
+    {
+        return $this->deposit;
+    }
+
+    public function setDeposit(int $deposit): self
+    {
+        $this->deposit = $deposit;
+        $this->touch();
+
+        return $this;
+    }
+
+    public function getCleaningFee(): int
+    {
+        return $this->cleaningFee;
+    }
+
+    public function setCleaningFee(int $cleaningFee): self
+    {
+        $this->cleaningFee = $cleaningFee;
+        $this->touch();
+
+        return $this;
+    }
+
+    public function getNightlyPrice(): int
+    {
+        return $this->nightlyPrice;
+    }
+
+    public function setNightlyPrice(int $nightlyPrice): self
+    {
+        $this->nightlyPrice = $nightlyPrice;
+        $this->touch();
+
+        return $this;
+    }
+
+    public function getWeekendPrice(): int
+    {
+        return $this->weekendPrice;
+    }
+
+    public function setWeekendPrice(int $weekendPrice): self
+    {
+        $this->weekendPrice = $weekendPrice;
+        $this->touch();
+
+        return $this;
+    }
+
+    public function isPetsAllowed(): bool
+    {
+        return $this->petsAllowed;
+    }
+
+    public function getPublishedAt(): ?\DateTimeImmutable
+    {
+        return $this->publishedAt;
+    }
+
+    public function getCountry(): Country
+    {
+        return $this->country;
+    }
+
+    public function setCountry(Country $country): self
+    {
+        $this->country = $country;
+        $this->touch();
+
+        return $this;
+    }
+
+    public function getCategory(): PropertyCategory
+    {
+        return $this->category;
+    }
+
+    public function setCategory(PropertyCategory $category): self
+    {
+        $this->category = $category;
+        $this->touch();
+
+        return $this;
+    }
+
+    public function getStatus(): PropertyStatus
+    {
+        return $this->status;
     }
 
     private function touch(): void

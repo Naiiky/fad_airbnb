@@ -1,0 +1,43 @@
+<article class="grid gap-5 rounded-[12px] border border-[#154539]/10 bg-white/70 p-5 shadow-[0_20px_70px_rgba(21,69,57,0.07)] lg:grid-cols-[1fr_auto] lg:items-center">
+    <div class="min-w-0">
+        <div class="flex flex-wrap items-center gap-3">
+            <h2 class="font-serif text-2xl font-semibold leading-tight text-[#1c1c19]">{{ property.title }}</h2>
+            <span class="rounded-full border border-[#2f5d50]/20 bg-[#2f5d50]/8 px-3 py-1 text-xs font-semibold text-[#154539]">{{ property.status.label }}</span>
+        </div>
+        <p class="mt-2 text-sm leading-6 text-[#404945]">{{ property.city }}, {{ property.country.label }} - {{ property.category.label }}</p>
+        <dl class="mt-4 grid gap-3 text-sm text-[#404945] sm:grid-cols-4">
+            <div>
+                <dt class="text-xs font-semibold uppercase tracking-[0.16em] text-[#717975]">Capacite</dt>
+                <dd class="mt-1 font-semibold text-[#1c1c19]">{{ property.maxGuest }} voyageurs</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-semibold uppercase tracking-[0.16em] text-[#717975]">Chambres</dt>
+                <dd class="mt-1 font-semibold text-[#1c1c19]">{{ property.bedrooms }}</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-semibold uppercase tracking-[0.16em] text-[#717975]">Surface</dt>
+                <dd class="mt-1 font-semibold text-[#1c1c19]">{{ property.areaM2 }} m2</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-semibold uppercase tracking-[0.16em] text-[#717975]">Prix</dt>
+                <dd class="mt-1 font-semibold text-[#1c1c19]">{{ property.nightlyPrice }} EUR/nuit</dd>
+            </div>
+        </dl>
+    </div>
+
+    <div class="flex flex-col gap-3 sm:flex-row lg:flex-col">
+        <a class="inline-flex min-h-[44px] items-center justify-center rounded-[10px] border border-[#c0c8c4] px-5 text-sm font-semibold text-[#154539] transition hover:border-[#154539]" href="{{ path('app_host_property_edit', { id: property.id }) }}">Modifier</a>
+        {% if property.status.label == 'DRAFT' %}
+            <form method="post" action="{{ path('app_host_property_publish', { id: property.id }) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('publish_property_' ~ property.id) }}">
+                <button class="inline-flex min-h-[44px] w-full items-center justify-center rounded-[10px] bg-[#2f5d50] px-5 text-sm font-semibold text-white transition hover:bg-[#154539]" type="submit">Publier</button>
+            </form>
+        {% endif %}
+        {% if property.status.label != 'HIDDEN' %}
+            <form method="post" action="{{ path('app_host_property_hide', { id: property.id }) }}" onsubmit="return confirm('Masquer ce logement ?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('hide_property_' ~ property.id) }}">
+                <button class="inline-flex min-h-[44px] w-full items-center justify-center rounded-[10px] border border-[#ba1a1a]/30 px-5 text-sm font-semibold text-[#ba1a1a] transition hover:border-[#ba1a1a]" type="submit">Masquer</button>
+            </form>
+        {% endif %}
+    </div>
+</article>

@@ -60,6 +60,15 @@ Encore
             "polyfill-corejs3",
             { method: "usage-global", version: "3.49" },
         ]);
+    })
+
+    .configureWatchOptions((watchOptions) => {
+        watchOptions.ignored = [
+            "**/node_modules/**",
+            "**/public/build/**",
+            "**/var/**",
+            "**/.git/**",
+        ];
     });
 
 // enables Sass/SCSS support

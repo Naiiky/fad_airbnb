@@ -1,0 +1,10 @@
+<header class="flex flex-col justify-between gap-5 border-b border-[#154539]/12 pb-8 lg:flex-row lg:items-end">
+    <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[#717975]">Espace hote</p>
+        <h1 class="mt-3 font-serif text-4xl font-semibold leading-tight text-[#1c1c19] md:text-6xl">{{ title }}</h1>
+        <p class="mt-4 max-w-[620px] text-base leading-7 text-[#404945]">{{ description }}</p>
+    </div>
+    {% if action_href is defined and action_label is defined %}
+        <a class="{{ action_class|default('inline-flex min-h-[46px] items-center justify-center rounded-[10px] border border-[#c0c8c4] px-5 text-sm font-semibold text-[#154539] transition hover:border-[#154539]') }}" href="{{ action_href }}">{{ action_label }}</a>
+    {% endif %}
+</header>

@@ -1,0 +1,7 @@
+{% for label, messages in app.flashes %}
+    <div class="mx-auto mt-4 max-w-4xl rounded-[10px] border px-4 py-3 text-sm {{ label == 'success' ? 'border-[#2f5d50]/25 text-[#154539]' : 'border-[#c0c8c4] text-[#404945]' }}" role="status">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endfor %}

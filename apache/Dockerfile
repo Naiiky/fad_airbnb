@@ -61,7 +61,10 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v$NVM_VERSION/install.
     && /bin/bash -c "source $NVM_DIR/nvm.sh \
         && nvm install $NODE_VERSION \
         && nvm alias default $NODE_VERSION \
-        && nvm use default" \
+        && nvm use default \
+        && ln -sf $(command -v node) /usr/local/bin/node \
+        && ln -sf $(command -v npm) /usr/local/bin/npm \
+        && ln -sf $(command -v npx) /usr/local/bin/npx" \
     && rm -rf /tmp/*
 
 # 8. CONFIGURATION APACHE

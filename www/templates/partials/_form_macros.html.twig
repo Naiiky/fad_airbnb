@@ -1,0 +1,19 @@
+{% macro field(field, label_class, input_class, error_class, help_text = null) %}
+    <div class="grid gap-2">
+        {{ form_label(field, null, { label_attr: { class: label_class ~ (field.vars.errors|length ? ' text-[#ba1a1a]' : '') } }) }}
+        {{ form_widget(field, { attr: { class: input_class ~ (field.vars.errors|length ? ' border-[#ba1a1a] bg-[#ffdad6]/10 focus:border-[#ba1a1a] focus:ring-[#ba1a1a]/12' : '') } }) }}
+        {% if help_text %}
+            <p class="text-xs leading-5 text-[#717975]">{{ help_text }}</p>
+        {% endif %}
+        {% for error in field.vars.errors %}
+            <p class="{{ error_class }}">{{ error.message }}</p>
+        {% endfor %}
+    </div>
+{% endmacro %}
+
+{% macro checkbox_card(field, label_class) %}
+    <label class="{{ label_class }}">
+        {{ form_widget(field, { attr: { class: 'size-4 rounded border-[#c0c8c4] accent-[#2f5d50]' } }) }}
+        <span>{{ field.vars.label }}</span>
+    </label>
+{% endmacro %}

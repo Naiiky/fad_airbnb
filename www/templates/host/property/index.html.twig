@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes logements | Havre{% endblock %}
+
+{% block body %}
+    <main class="mx-auto grid w-full max-w-[1180px] gap-8 px-6 py-10 md:px-10">
+        {% include 'host/property/_page_header.html.twig' with {
+            title: 'Mes logements',
+            description: 'Pilotez vos annonces, leur statut et leur mise en ligne depuis votre espace proprietaire.',
+            action_href: path('app_host_property_new'),
+            action_label: 'Ajouter un logement',
+            action_class: 'inline-flex min-h-[46px] items-center justify-center rounded-[10px] bg-[#2f5d50] px-5 text-sm font-semibold text-white transition hover:bg-[#154539]'
+        } only %}
+
+        {% if properties|length > 0 %}
+            <section class="grid gap-5">
+                {% for property in properties %}
+                    {% include 'host/property/_property_card.html.twig' with { property: property } only %}
+                {% endfor %}
+            </section>
+        {% else %}
+            {% include 'host/property/_empty_state.html.twig' only %}
+        {% endif %}
+    </main>
+{% endblock %}
