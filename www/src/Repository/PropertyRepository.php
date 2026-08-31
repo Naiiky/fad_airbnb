@@ -35,6 +35,29 @@ class PropertyRepository extends ServiceEntityRepository
     }
 
     /** @return list<Property> */
+    public function findForAdmin(?string $status = null): array
+    {
+        $queryBuilder = $this->createQueryBuilder('property')
+            ->addSelect('owner', 'status', 'category', 'country', 'images')
+            ->join('property.user', 'owner')
+            ->join('property.status', 'status')
+            ->join('property.category', 'category')
+            ->join('property.country', 'country')
+            ->leftJoin('property.images', 'images')
+            ->andWhere('property.deletedAt IS NULL')
+            ->orderBy('property.updatedAt', 'DESC')
+            ->addOrderBy('images.displayOrder', 'ASC');
+
+        if (null !== $status && '' !== $status) {
+            $queryBuilder
+                ->andWhere('status.label = :status')
+                ->setParameter('status', $status);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+    /** @return list<Property> */
     public function findLatestPublished(int $limit = 6): array
     {
         return $this->createPublishedQueryBuilder()

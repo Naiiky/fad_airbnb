@@ -11,6 +11,7 @@ use App\Entity\PropertyStatus;
 use App\Entity\User;
 use App\Form\PropertyFormType;
 use App\Repository\CountryRepository;
+use App\Repository\BookingRepository;
 use App\Repository\PropertyCategoryRepository;
 use App\Repository\PropertyRepository;
 use App\Repository\PropertyStatusRepository;
@@ -40,12 +41,13 @@ class HostPropertyController extends AbstractController
     }
 
     #[Route('', name: 'index', methods: ['GET'])]
-    public function index(PropertyRepository $propertyRepository): Response
+    public function index(PropertyRepository $propertyRepository, BookingRepository $bookingRepository): Response
     {
         $user = $this->getHostUser();
 
         return $this->render('host/property/index.html.twig', [
             'properties' => $propertyRepository->findForOwner($user),
+            'pendingBookings' => $bookingRepository->countPendingForHost($user),
         ]);
     }
 

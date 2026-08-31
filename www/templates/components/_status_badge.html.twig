@@ -1,0 +1,8 @@
+{% set tone = tone|default(label in ['PENDING', 'DRAFT'] ? 'pending' : (label in ['ACCEPTED', 'PUBLISHED', 'ACTIVE'] ? 'success' : (label in ['REJECTED', 'CANCELLED', 'HIDDEN', 'SUSPENDED'] ? 'danger' : 'neutral'))) %}
+{% set classes = {
+    pending: 'border-[#b7791f]/25 bg-[#fff7e8] text-[#7a4b00]',
+    success: 'border-[#2f5d50]/25 bg-[#edf7f3] text-[#154539]',
+    danger: 'border-[#ba1a1a]/25 bg-[#fff1ef] text-[#8f1414]',
+    neutral: 'border-[#c0c8c4] bg-[#fcf9f4] text-[#404945]'
+} %}
+<span class="inline-flex min-h-[28px] items-center rounded-full border px-3 text-xs font-semibold {{ classes[tone] }}">{{ label }}</span>

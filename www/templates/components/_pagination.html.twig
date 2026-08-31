@@ -1,0 +1,16 @@
+{% if pagination.totalPages > 1 %}
+    <nav class="flex flex-wrap items-center justify-center gap-2" aria-label="{{ aria_label|default('Pagination') }}">
+        {% set previous_page = pagination.page - 1 %}
+        {% set next_page = pagination.page + 1 %}
+        {% set page_start = max(1, pagination.page - 2) %}
+        {% set page_end = min(pagination.totalPages, pagination.page + 2) %}
+
+        <a class="inline-flex min-h-[42px] items-center justify-center rounded-[8px] border border-[#c0c8c4] px-4 text-sm font-semibold text-[#154539] transition {{ pagination.page == 1 ? 'pointer-events-none opacity-45' : 'hover:border-[#154539]' }}" href="{{ path(route, query|merge({ page: previous_page })) }}">Precedent</a>
+
+        {% for page in page_start..page_end %}
+            <a class="inline-flex min-h-[42px] min-w-[42px] items-center justify-center rounded-[8px] border px-4 text-sm font-semibold transition {{ page == pagination.page ? 'border-[#154539] bg-[#154539] text-white' : 'border-[#c0c8c4] text-[#154539] hover:border-[#154539]' }}" href="{{ path(route, query|merge({ page: page })) }}">{{ page }}</a>
+        {% endfor %}
+
+        <a class="inline-flex min-h-[42px] items-center justify-center rounded-[8px] border border-[#c0c8c4] px-4 text-sm font-semibold text-[#154539] transition {{ pagination.page >= pagination.totalPages ? 'pointer-events-none opacity-45' : 'hover:border-[#154539]' }}" href="{{ path(route, query|merge({ page: next_page })) }}">Suivant</a>
+    </nav>
+{% endif %}

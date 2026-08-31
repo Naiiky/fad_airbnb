@@ -1,0 +1,17 @@
+{% set tag = tag|default('a') %}
+{% set variant = variant|default('secondary') %}
+{% set type = type|default('button') %}
+{% set class = 'inline-flex min-h-[44px] items-center justify-center rounded-[8px] px-5 text-sm font-semibold transition focus:outline-none focus:ring-[3px] focus:ring-[#2f5d50]/20 ' ~ (
+    variant == 'primary'
+        ? 'bg-[#2f5d50] text-white hover:bg-[#154539]'
+        : (variant == 'danger'
+            ? 'border border-[#ba1a1a]/30 text-[#ba1a1a] hover:border-[#ba1a1a]'
+            : 'border border-[#c0c8c4] text-[#154539] hover:border-[#154539]')
+    )
+ %}
+
+{% if tag == 'button' %}
+    <button class="{{ class }} {{ extra_class|default('') }}" type="{{ type }}">{{ label }}</button>
+{% else %}
+    <a class="{{ class }} {{ extra_class|default('') }}" href="{{ href }}">{{ label }}</a>
+{% endif %}

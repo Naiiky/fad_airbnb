@@ -12,6 +12,21 @@
             action_class: 'inline-flex min-h-[46px] items-center justify-center rounded-[10px] bg-[#2f5d50] px-5 text-sm font-semibold text-white transition hover:bg-[#154539]'
         } only %}
 
+        <section class="grid gap-4 md:grid-cols-3">
+            <a class="border border-[#154539]/10 bg-white/75 p-5 transition hover:border-[#154539]/30 focus:outline-none focus:ring-[3px] focus:ring-[#2f5d50]/20" href="{{ path('app_host_booking_index', { status: 'PENDING' }) }}">
+                <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[#717975]">Demandes en attente</p>
+                <p class="mt-2 text-3xl font-semibold text-[#1c1c19]">{{ pendingBookings }}</p>
+            </a>
+            <a class="border border-[#154539]/10 bg-white/75 p-5 transition hover:border-[#154539]/30 focus:outline-none focus:ring-[3px] focus:ring-[#2f5d50]/20" href="{{ path('app_host_booking_index') }}">
+                <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[#717975]">Reservations</p>
+                <p class="mt-2 text-lg font-semibold text-[#1c1c19]">Toutes les demandes</p>
+            </a>
+            <a class="border border-[#154539]/10 bg-white/75 p-5 transition hover:border-[#154539]/30 focus:outline-none focus:ring-[3px] focus:ring-[#2f5d50]/20" href="{{ path('app_account_show') }}">
+                <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[#717975]">Compte</p>
+                <p class="mt-2 text-lg font-semibold text-[#1c1c19]">Profil hote</p>
+            </a>
+        </section>
+
         {% if properties|length > 0 %}
             <section class="grid gap-5">
                 {% for property in properties %}

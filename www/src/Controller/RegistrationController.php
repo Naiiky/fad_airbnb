@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Entity\UserStatus;
 use App\Form\Model\RegistrationRequest;
 use App\Form\RegistrationFormType;
+use App\Mailer\AccountMailer;
 use App\Repository\UserRepository;
 use App\Security\AgeMajorityChecker;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,6 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -27,6 +29,7 @@ class RegistrationController extends AbstractController
         UserPasswordHasherInterface $passwordHasher,
         UserRepository $userRepository,
         AgeMajorityChecker $ageMajorityChecker,
+        AccountMailer $accountMailer,
     ): Response {
         if (null !== $this->getUser()) {
             return $this->redirectToRoute('app_home');
@@ -73,6 +76,11 @@ class RegistrationController extends AbstractController
 
             $entityManager->persist($user);
             $entityManager->flush();
+            try {
+                $accountMailer->sendWelcomeEmail($user);
+            } catch (TransportExceptionInterface) {
+                $this->addFlash('notice', "Votre compte est cree, mais l'e-mail de bienvenue n'a pas pu etre envoye.");
+            }
 
             $this->addFlash('success', 'Votre compte a été créé. Vous pouvez vous connecter.');
 

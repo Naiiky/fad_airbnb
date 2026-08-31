@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes favoris | Havre{% endblock %}
+
+{% block body %}
+    <main class="mx-auto grid w-full max-w-[1180px] gap-8 px-6 py-10 md:px-10">
+        <section>
+            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-[#2f5d50]">Favoris</p>
+            <h1 class="mt-3 font-serif text-4xl font-semibold leading-tight text-[#1c1c19] md:text-5xl">Mes favoris</h1>
+        </section>
+
+        {% if favorites|length %}
+            <section class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {% for favorite in favorites %}
+                    <div class="grid gap-3">
+                        {% include 'home/_property_card.html.twig' with { property: favorite.property } only %}
+                        <form method="post" action="{{ path('app_favorite_remove', { id: favorite.property.id }) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('favorite_property_' ~ favorite.property.id) }}">
+                            {% include 'components/_button.html.twig' with { tag: 'button', type: 'submit', label: 'Retirer des favoris', variant: 'danger', extra_class: 'w-full' } only %}
+                        </form>
+                    </div>
+                {% endfor %}
+            </section>
+        {% else %}
+            {% include 'components/_empty_state.html.twig' with {
+                title: 'Aucun favori',
+                description: 'Gardez vos logements preferes sous la main depuis le catalogue.',
+                action_href: path('app_catalogue'),
+                action_label: 'Explorer les logements'
+            } only %}
+        {% endif %}
+    </main>
+{% endblock %}

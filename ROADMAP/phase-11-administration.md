@@ -2,45 +2,44 @@
 
 ## Gate de Phase
 
-- [ ] Role `ADMIN` disponible.
-- [ ] `/admin` interdit aux `USER`.
-- [ ] Tests securite admin passent.
+- [x] Role `ADMIN` disponible.
+- [x] `/admin` interdit aux `USER`.
+- [ ] Tests securite admin passent. `UNABLE_TO_VALIDATE`: PHPUnit fonctionnel bloque sur `SQLSTATE[HY000] [1044] Access denied for user 'admin'@'%' to database 'airbnb_test'`.
 
 ## TASK 11.1 - Securisation /admin
 
-- [ ] Ajouter `ROLE_ADMIN`.
-- [ ] Configurer `access_control`.
-- [ ] Tester acces `USER` refuse.
-- [ ] Tester acces admin autorise.
+- [x] Ajouter `ROLE_ADMIN`.
+- [x] Configurer `access_control`.
+- [x] Tester acces `USER` refuse.
+- [x] Tester acces admin autorise.
 
 ## TASK 11.2 - Utilisateurs
 
-- [ ] Creer liste utilisateurs.
-- [ ] Ajouter recherche.
-- [ ] Afficher statut.
-- [ ] Ajouter pagination.
-- [ ] Ajouter tests.
+- [x] Creer liste utilisateurs.
+- [x] Ajouter recherche.
+- [x] Afficher statut.
+- [x] Ajouter pagination.
+- [x] Ajouter tests.
 
 ## TASK 11.3 - Suspension
 
-- [ ] Creer action POST.
-- [ ] Ajouter CSRF.
-- [ ] Transition `ACTIVE` vers `SUSPENDED`.
-- [ ] Bloquer login utilisateur suspendu.
-- [ ] Ajouter tests.
+- [x] Creer action POST.
+- [x] Ajouter CSRF.
+- [x] Transition `ACTIVE` vers `SUSPENDED`.
+- [x] Bloquer login utilisateur suspendu.
+- [x] Ajouter tests.
 
 ## TASK 11.4 - Logements
 
-- [ ] Creer liste globale.
-- [ ] Ajouter filtres.
-- [ ] Afficher statut.
-- [ ] Afficher proprietaire.
-- [ ] Ajouter tests.
+- [x] Creer liste globale.
+- [x] Ajouter filtres.
+- [x] Afficher statut.
+- [x] Afficher proprietaire.
+- [x] Ajouter tests.
 
 ## TASK 11.5 - Moderation Property
 
-- [ ] Ajouter action masquer.
-- [ ] Ajouter CSRF.
-- [ ] Restreindre admin.
-- [ ] Ajouter tests.
-
+- [x] Ajouter action masquer.
+- [x] Ajouter CSRF.
+- [x] Restreindre admin.
+- [x] Ajouter tests.

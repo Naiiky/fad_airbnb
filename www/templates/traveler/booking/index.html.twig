@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes voyages | Havre{% endblock %}
+
+{% block body %}
+    <main class="mx-auto grid w-full max-w-[1180px] gap-8 px-6 py-10 md:px-10">
+        <section>
+            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-[#2f5d50]">Voyageur</p>
+            <h1 class="mt-3 font-serif text-4xl font-semibold leading-tight text-[#1c1c19] md:text-5xl">Mes voyages</h1>
+            <p class="mt-3 max-w-[680px] text-sm leading-6 text-[#404945]">Retrouvez vos demandes, reservations confirmees et annulations.</p>
+        </section>
+
+        {% if bookings|length %}
+            <section class="grid gap-4">
+                {% for booking in bookings %}
+                    {% include 'partials/_booking_card.html.twig' with { booking: booking, mode: 'traveler' } only %}
+                {% endfor %}
+            </section>
+        {% else %}
+            {% include 'components/_empty_state.html.twig' with {
+                title: 'Aucun voyage',
+                description: 'Explorez le catalogue pour envoyer votre premiere demande.',
+                action_href: path('app_catalogue'),
+                action_label: 'Parcourir le catalogue'
+            } only %}
+        {% endif %}
+    </main>
+{% endblock %}

@@ -8,6 +8,7 @@ use App\Entity\Booking;
 use App\Entity\Property;
 use App\Entity\User;
 use App\Form\BookingFormType;
+use App\Repository\FavoritePropertyRepository;
 use App\Repository\PropertyCategoryRepository;
 use App\Repository\PropertyRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -53,6 +54,7 @@ class HomeController extends AbstractController
         Request $request,
         PropertyRepository $propertyRepository,
         BookingRequestCreator $bookingRequestCreator,
+        FavoritePropertyRepository $favoriteRepository,
         EntityManagerInterface $entityManager,
     ): Response {
         $property = $propertyRepository->findPublishedDetail($id);
@@ -107,6 +109,7 @@ class HomeController extends AbstractController
         return $this->render('home/property_show.html.twig', [
             'property' => $property,
             'bookingForm' => $form,
+            'isFavorite' => $this->isFavorite($favoriteRepository, $property),
         ], new Response($form->isSubmitted() ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK));
     }
 
@@ -135,4 +138,13 @@ class HomeController extends AbstractController
         return null;
     }
 
+    private function isFavorite(FavoritePropertyRepository $favoriteRepository, Property $property): bool
+    {
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        return null !== $favoriteRepository->findOneForUserAndProperty($user, $property);
+    }
 }

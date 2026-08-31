@@ -558,6 +558,11 @@ class Property
         return $this->publishedAt;
     }
 
+    public function getDeletedAt(): ?\DateTimeImmutable
+    {
+        return $this->deletedAt;
+    }
+
     public function getCountry(): Country
     {
         return $this->country;

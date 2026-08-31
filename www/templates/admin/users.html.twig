@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Utilisateurs | Havre{% endblock %}
+
+{% block body %}
+    <main class="mx-auto grid w-full max-w-[1180px] gap-8 px-6 py-10 md:px-10">
+        <section class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.18em] text-[#2f5d50]">Administration</p>
+                <h1 class="mt-3 font-serif text-4xl font-semibold leading-tight text-[#1c1c19] md:text-5xl">Utilisateurs</h1>
+            </div>
+            <form class="flex w-full max-w-md gap-2" method="get">
+                <label class="sr-only" for="q">Recherche</label>
+                <input class="min-h-[44px] w-full rounded-[4px] border border-[#c0c8c4] bg-[#fcf9f4] px-4 text-sm outline-none focus:border-[#2f5d50] focus:ring-[3px] focus:ring-[#2f5d50]/12" id="q" name="q" value="{{ query }}" placeholder="Nom ou email">
+                {% include 'components/_button.html.twig' with { tag: 'button', type: 'submit', label: 'Chercher', variant: 'primary' } only %}
+            </form>
+        </section>
+
+        <section class="overflow-x-auto border border-[#154539]/10 bg-white/75">
+            <table class="w-full min-w-[760px] text-left text-sm">
+                <thead class="border-b border-[#154539]/10 text-xs font-semibold uppercase tracking-[0.12em] text-[#717975]">
+                    <tr>
+                        <th class="px-4 py-3">Nom</th>
+                        <th class="px-4 py-3">Email</th>
+                        <th class="px-4 py-3">Statut</th>
+                        <th class="px-4 py-3">Roles</th>
+                        <th class="px-4 py-3">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in pagination.items %}
+                        <tr class="border-b border-[#154539]/10 last:border-0">
+                            <td class="px-4 py-4 font-semibold text-[#1c1c19]">{{ user.firstname }} {{ user.lastname }}</td>
+                            <td class="px-4 py-4 text-[#404945]">{{ user.email }}</td>
+                            <td class="px-4 py-4">{% include 'components/_status_badge.html.twig' with { label: user.status.label } only %}</td>
+                            <td class="px-4 py-4 text-[#404945]">{{ user.roles|join(', ') }}</td>
+                            <td class="px-4 py-4">
+                                {% if 'ROLE_ADMIN' not in user.roles and user.status.label != 'SUSPENDED' %}
+                                    <form method="post" action="{{ path('app_admin_user_suspend', { id: user.id }) }}" onsubmit="return confirm('Suspendre cet utilisateur ?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('suspend_user_' ~ user.id) }}">
+                                        {% include 'components/_button.html.twig' with { tag: 'button', type: 'submit', label: 'Suspendre', variant: 'danger' } only %}
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        {% include 'components/_pagination.html.twig' with { pagination: pagination, route: 'app_admin_users', query: { q: query }, aria_label: 'Pagination utilisateurs' } only %}
+    </main>
+{% endblock %}

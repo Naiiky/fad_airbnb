@@ -357,6 +357,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->status;
     }
 
+    public function setStatus(UserStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function getAgeVerificationStatus(): AgeVerificationStatus
     {
         return $this->ageVerificationStatus;
@@ -448,5 +455,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    /** @return Collection<int, Property> */
+    public function getProperties(): Collection
+    {
+        return $this->properties;
+    }
+
+    /** @return Collection<int, Booking> */
+    public function getBookings(): Collection
+    {
+        return $this->bookings;
+    }
+
+    /** @return Collection<int, FavoriteProperty> */
+    public function getFavoriteProperties(): Collection
+    {
+        return $this->favoriteProperties;
     }
 }

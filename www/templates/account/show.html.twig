@@ -17,6 +17,25 @@
             <a class="inline-flex min-h-[46px] items-center justify-center rounded-[10px] bg-[#2f5d50] px-5 text-sm font-semibold text-white transition hover:bg-[#154539]" href="{{ path('app_account_edit') }}">Modifier le profil</a>
         </section>
 
+        <section class="grid gap-4 md:grid-cols-4">
+            <a class="border border-[#154539]/10 bg-white/75 p-5 transition hover:border-[#154539]/30 focus:outline-none focus:ring-[3px] focus:ring-[#2f5d50]/20" href="{{ path('app_traveler_booking_index') }}">
+                <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[#717975]">Voyageur</p>
+                <p class="mt-2 text-lg font-semibold text-[#1c1c19]">Mes voyages</p>
+            </a>
+            <a class="border border-[#154539]/10 bg-white/75 p-5 transition hover:border-[#154539]/30 focus:outline-none focus:ring-[3px] focus:ring-[#2f5d50]/20" href="{{ path('app_host_property_index') }}">
+                <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[#717975]">Hote</p>
+                <p class="mt-2 text-lg font-semibold text-[#1c1c19]">Mes logements</p>
+            </a>
+            <a class="border border-[#154539]/10 bg-white/75 p-5 transition hover:border-[#154539]/30 focus:outline-none focus:ring-[3px] focus:ring-[#2f5d50]/20" href="{{ path('app_host_booking_index', { status: 'PENDING' }) }}">
+                <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[#717975]">Demandes</p>
+                <p class="mt-2 text-lg font-semibold text-[#1c1c19]">{{ pendingHostBookings }} en attente</p>
+            </a>
+            <a class="border border-[#154539]/10 bg-white/75 p-5 transition hover:border-[#154539]/30 focus:outline-none focus:ring-[3px] focus:ring-[#2f5d50]/20" href="{{ path('app_favorite_index') }}">
+                <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[#717975]">Favoris</p>
+                <p class="mt-2 text-lg font-semibold text-[#1c1c19]">Mes favoris</p>
+            </a>
+        </section>
+
         <section class="grid gap-6 lg:grid-cols-[360px_1fr]">
             <aside class="rounded-[12px] border border-[#154539]/10 bg-white/60 p-6 shadow-[0_20px_70px_rgba(21,69,57,0.08)]">
                 <div class="flex items-center gap-4">

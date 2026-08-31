@@ -1,0 +1,9 @@
+<section class="border border-[#154539]/10 bg-white/70 px-6 py-12 text-center">
+    <h2 class="font-serif text-3xl font-semibold text-[#1c1c19]">{{ title }}</h2>
+    <p class="mx-auto mt-3 max-w-[520px] text-sm leading-6 text-[#404945]">{{ description }}</p>
+    {% if action_href|default(null) and action_label|default(null) %}
+        <div class="mt-6">
+            {% include 'components/_button.html.twig' with { href: action_href, label: action_label, variant: action_variant|default('primary') } only %}
+        </div>
+    {% endif %}
+</section>

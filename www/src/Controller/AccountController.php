@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Language;
 use App\Entity\User;
 use App\Form\ProfileFormType;
+use App\Repository\BookingRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,10 +20,13 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class AccountController extends AbstractController
 {
     #[Route('/account', name: 'app_account_show', methods: ['GET'])]
-    public function show(): Response
+    public function show(BookingRepository $bookingRepository): Response
     {
+        $user = $this->getProfileUser();
+
         return $this->render('account/show.html.twig', [
-            'user' => $this->getProfileUser(),
+            'user' => $user,
+            'pendingHostBookings' => $bookingRepository->countPendingForHost($user),
         ]);
     }
 

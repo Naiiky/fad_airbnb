@@ -22,4 +22,14 @@ class FavoriteProperty
         $this->user = $user;
         $this->property = $property;
     }
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    public function getProperty(): Property
+    {
+        return $this->property;
+    }
 }

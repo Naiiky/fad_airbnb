@@ -141,6 +141,13 @@ class Booking
         return $this->status;
     }
 
+    public function setStatus(BookingStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     public function getProperty(): Property
     {
         return $this->property;
@@ -157,5 +164,15 @@ class Booking
         $this->cancellationDate = $date;
 
         return $this;
+    }
+
+    public function getCancellationReason(): ?string
+    {
+        return $this->cancellationReason;
+    }
+
+    public function getCancellationDate(): ?\DateTimeImmutable
+    {
+        return $this->cancellationDate;
     }
 }
